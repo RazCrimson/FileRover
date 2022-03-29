@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:file_icon/file_icon.dart';
 import 'package:file_rover/widgets/app_back_button.dart';
 import 'package:file_rover/widgets/browser_back_button.dart';
 import 'package:flutter/material.dart';
@@ -60,8 +61,8 @@ class FileBrowser extends StatelessWidget {
                               return Card(
                                 child: ListTile(
                                   leading: FileSystemUtils.isFile(entity)
-                                      ? const Icon(Icons.feed_outlined)
-                                      : const Icon(Icons.folder),
+                                      ? FileIcon(FileSystemUtils.basename(entity), size: 48)
+                                      : const Icon(Icons.folder, size: 48),
                                   title: Text(FileSystemUtils.basename(entity)),
                                   subtitle: subtitle(entity),
                                   onTap: () async {

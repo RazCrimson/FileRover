@@ -29,8 +29,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  open_file: ^3.2.1
   provider: ^6.0.2
+  open_file: ^3.2.1
+  file_icon: ^1.0.0
   path_provider: ^2.0.9
   permission_handler: ^9.2.0
 
