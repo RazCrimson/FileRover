@@ -6,16 +6,16 @@ import '../fs/sorters/enums.dart';
 import '../fs/utils.dart';
 import '../providers/sort.dart';
 
-class CreateDirectoryWidget extends StatefulWidget {
+class PromptDialogWidget extends StatefulWidget {
   final String path;
 
-  const CreateDirectoryWidget({Key? key, required this.path}) : super(key: key);
+  const PromptDialogWidget({Key? key, required this.path}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _CreateDirectoryWidget();
 }
 
-class _CreateDirectoryWidget extends State<CreateDirectoryWidget> {
+class _CreateDirectoryWidget extends State<PromptDialogWidget> {
   @override
   Widget build(BuildContext context) {
     final TextEditingController folderEditorController = TextEditingController();
@@ -27,7 +27,9 @@ class _CreateDirectoryWidget extends State<CreateDirectoryWidget> {
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(title: TextField(controller: folderEditorController)),
-            TextButton(
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            children: [TextButton(
               onPressed: () async {
                 final folderName = folderEditorController.text;
                 try {
@@ -46,7 +48,7 @@ class _CreateDirectoryWidget extends State<CreateDirectoryWidget> {
             )
           ],
         ),
-      ),
-    );
+      ])
+    ));
   }
 }

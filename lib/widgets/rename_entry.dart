@@ -1,24 +1,31 @@
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../fs/sorters/enums.dart';
-import '../fs/utils.dart';
 import '../providers/sort.dart';
 
-class CreateDirectoryWidget extends StatefulWidget {
-  final String path;
+class RenameEntryWidget extends StatefulWidget {
+  final FileSystemEntity entity;
 
-  const CreateDirectoryWidget({Key? key, required this.path}) : super(key: key);
+  const RenameEntryWidget({Key? key, required this.entity}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _CreateDirectoryWidget();
+  State<StatefulWidget> createState() => _RenameEntryWidget();
 }
 
-class _CreateDirectoryWidget extends State<CreateDirectoryWidget> {
+class _RenameEntryWidget extends State<RenameEntryWidget> {
+
+  Future<void> handleRename(BuildContext context, String newName) async {
+
+  }
+
   @override
   Widget build(BuildContext context) {
-    final TextEditingController folderEditorController = TextEditingController();
+    final TextEditingController renameField = TextEditingController();
 
     return Dialog(
       child: Container(
@@ -26,13 +33,13 @@ class _CreateDirectoryWidget extends State<CreateDirectoryWidget> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            ListTile(title: TextField(controller: folderEditorController)),
+            ListTile(title: TextField(controller: renameField)),
             TextButton(
               onPressed: () async {
-                final folderName = folderEditorController.text;
+                final entityName = renameField.text;
+                HapticFeedback.vibrate();
                 try {
-                  // Create Folder
-                  await FileSystemUtils.createFolder(widget.path, folderName);
+                  await widget.entity.rename(widget.entity.parent.path + "/" + entityName);
                 } catch (e) {
                   print(e);
                 }
@@ -42,7 +49,7 @@ class _CreateDirectoryWidget extends State<CreateDirectoryWidget> {
                 Provider.of<SortProvider>(context, listen: false).sortBy = SortBy.type;
                 Provider.of<SortProvider>(context, listen: false).sortBy = val;
               },
-              child: const Text('Create Folder'),
+              child: const Text('Rename'),
             )
           ],
         ),

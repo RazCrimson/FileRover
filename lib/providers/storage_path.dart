@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import '../fs/utils.dart';
 
 class StoragePathProvider with ChangeNotifier {
-  StoragePathProvider(this._path);
-
   String _path;
+
+  StoragePathProvider(this._path);
 
   String get path => _path;
 
@@ -34,8 +34,4 @@ class StoragePathProvider with ChangeNotifier {
     }
   }
 
-  void reset() {
-    _path = "";
-    notifyListeners();
-  }
 }

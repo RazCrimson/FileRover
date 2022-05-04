@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:file_icon/file_icon.dart';
+import 'package:file_rover/screens/utils.dart';
 import 'package:file_rover/widgets/app_back_button.dart';
 import 'package:file_rover/widgets/browser_back_button.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ import 'package:provider/provider.dart';
 import '../fs/utils.dart';
 import '../providers/storage_path.dart';
 import '../widgets/create_directory.dart';
+import '../widgets/entity_context_menu.dart';
 import '../widgets/file_list.dart';
 import '../widgets/select_storage.dart';
 import '../widgets/sort_dialog.dart';
@@ -25,8 +27,12 @@ class FileBrowser extends StatelessWidget {
     showDialog(context: context, builder: (context) => const SelectStorageWidget());
   }
 
-  void createCreateDirectoryDialog(BuildContext context) {
-    showDialog(context: context, builder: (context) => const CreateDirectoryWidget());
+  void createCreateDirectoryDialog(BuildContext context, String path) {
+    showDialog(context: context, builder: (context) => CreateDirectoryWidget(path: path));
+  }
+
+  void createEntityContextMenu(BuildContext context, FileSystemEntity entity) {
+    showDialog(context: context, builder: (context) => EntityContextMenu(entity: entity));
   }
 
   @override
@@ -39,14 +45,17 @@ class FileBrowser extends StatelessWidget {
                     appBar: AppBar(
                       actions: [
                         IconButton(
-                            onPressed: () => createCreateDirectoryDialog(context),
+                            onPressed: () =>
+                                constructDialog(context, CreateDirectoryWidget(path: storagePathProvider.path)),
                             icon: const Icon(Icons.create_new_folder_outlined)),
-                        IconButton(onPressed: () => createSortDialog(context), icon: const Icon(Icons.sort_rounded)),
                         IconButton(
-                            onPressed: () => createSelectStorageDialog(context),
+                            onPressed: () => constructDialog(context, const SortWidget()),
+                            icon: const Icon(Icons.sort_rounded)),
+                        IconButton(
+                            onPressed: () => constructDialog(context, const SelectStorageWidget()),
                             icon: const Icon(Icons.sd_storage_rounded))
                       ],
-                      title: Text(storagePathProvider.path.split('/').last),
+                      title: const Text("File Rover"),
                       leading: const BrowserBackButton(),
                     ),
                     body: Container(
@@ -74,6 +83,7 @@ class FileBrowser extends StatelessWidget {
                                       OpenFile.open(entity.path);
                                     }
                                   },
+                                  onLongPress: () => constructDialog(context, EntityContextMenu(entity: entity)),
                                 ),
                               );
                             },

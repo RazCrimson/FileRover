@@ -12,14 +12,13 @@ class AppBackButton extends StatefulWidget {
   final Widget child;
 
   @override
-  State<StatefulWidget> createState() => _AppBackButton(child);
+  State<StatefulWidget> createState() => _AppBackButton();
 }
 
 class _AppBackButton extends State<AppBackButton> {
-  final Widget child;
   DateTime? lastInvocationAtRoot;
 
-  _AppBackButton(this.child);
+  _AppBackButton();
 
   Future<bool> handleButtonPress(BuildContext context) async {
     final storagePathProvider = Provider.of<StoragePathProvider>(context, listen: false);
@@ -37,6 +36,6 @@ class _AppBackButton extends State<AppBackButton> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(child: child, onWillPop: () => handleButtonPress(context));
+    return WillPopScope(child: widget.child, onWillPop: () => handleButtonPress(context));
   }
 }
