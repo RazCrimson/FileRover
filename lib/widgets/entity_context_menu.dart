@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../fs/sorters/enums.dart';
-import '../fs/utils.dart';
+import '../fs/local.dart';
 import '../providers/sort.dart';
 
 class EntityContextMenu extends StatefulWidget {
@@ -55,7 +55,7 @@ class _EntityContextMenu extends State<EntityContextMenu> {
               future: widget.entity.stat(),
               builder: (context, snapshot) {
                 final children = [
-                  Text(FileSystemUtils.basename(widget.entity), style: headerStyle),
+                  Text(LocalFsController.basename(widget.entity), style: headerStyle),
                   spacingBox,
                   Align(
                       alignment: Alignment.centerLeft,

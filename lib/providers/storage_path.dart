@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
-import '../fs/utils.dart';
+import '../fs/local.dart';
 
 class StoragePathProvider with ChangeNotifier {
   String _path;
@@ -21,9 +21,9 @@ class StoragePathProvider with ChangeNotifier {
     path = directory.path;
   }
 
-  /// return true if current directory is the root. false, if the current directory not on root of the stogare.
+  /// return true if current directory is the root. false, if the current directory not on root of the storage.
   Future<bool> isRootDirectory() async {
-    final List<Directory> storageList = await FileSystemUtils.getStorageList();
+    final List<Directory> storageList = await LocalFsController.getStorageList();
     return storageList.where((element) => element.path == Directory(path).path).isNotEmpty;
   }
 

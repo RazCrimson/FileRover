@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../fs/sorters/enums.dart';
-import '../fs/utils.dart';
+import '../fs/local.dart';
 import '../providers/sort.dart';
 
 class CreateDirectoryWidget extends StatefulWidget {
@@ -32,7 +32,7 @@ class _CreateDirectoryWidget extends State<CreateDirectoryWidget> {
                 final folderName = folderEditorController.text;
                 try {
                   // Create Folder
-                  await FileSystemUtils.createFolder(widget.path, folderName);
+                  await LocalFsController.createFolder(widget.path, folderName);
                 } catch (e) {
                   print(e);
                 }

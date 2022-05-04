@@ -6,7 +6,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'sorters/enums.dart';
 import 'sorters/factory.dart';
 
-class FileSystemUtils {
+class LocalFsController {
   /// Return true if FileSystemEntity is File else returns false
   static bool isFile(FileSystemEntity entity) {
     return (entity is File);

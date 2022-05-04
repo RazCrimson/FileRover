@@ -1,8 +1,9 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../fs/utils.dart';
+import '../fs/local.dart';
 import '../providers/sort.dart';
 import '../providers/storage_path.dart';
 
@@ -13,7 +14,7 @@ typedef _Builder = Widget Function(
 
 class FileList extends StatefulWidget {
   /// For the loading screen, create a custom widget.
-  /// Simple Centered CircularProgressIndicator is provided by default.
+
   final Widget? loadingScreen;
 
   /// Custom widget for an empty directory
@@ -39,16 +40,16 @@ class FileList extends StatefulWidget {
 class _FileListState extends State<FileList> {
   @override
   Widget build(BuildContext context) {
-    // final storagePathProvider = Provider.of<StoragePathProvider>(context, listen: false);
 
     return FutureBuilder<List<Directory>?>(
-      future: FileSystemUtils.getStorageList(),
+      future: LocalFsController.getStorageList(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          // storagePathProvider.path = snapshot.data!.first.path;
           return _body(context);
         } else if (snapshot.hasError) {
-          print(snapshot.error);
+          if (kDebugMode) {
+            print(snapshot.error);
+          }
           return _errorPage(snapshot.error.toString());
         } else {
           return _loadingScreenWidget();
@@ -63,7 +64,7 @@ class _FileListState extends State<FileList> {
 
     return FutureBuilder<List<FileSystemEntity>>(
         future:
-            FileSystemUtils.getSortedEntities(storagePathProvider.path, sortProvider.sortBy, sortProvider.sortOrder),
+            LocalFsController.getSortedEntities(storagePathProvider.path, sortProvider.sortBy, sortProvider.sortOrder),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             List<FileSystemEntity> entities = snapshot.data!;
@@ -72,7 +73,7 @@ class _FileListState extends State<FileList> {
             }
             if (widget.hideHiddenEntity) {
               entities = entities.where((element) {
-                if (FileSystemUtils.basename(element) == "" || FileSystemUtils.basename(element).startsWith('.')) {
+                if (LocalFsController.basename(element) == "" || LocalFsController.basename(element).startsWith('.')) {
                   return false;
                 } else {
                   return true;
@@ -81,7 +82,9 @@ class _FileListState extends State<FileList> {
             }
             return widget.builder(context, entities);
           } else if (snapshot.hasError) {
-            print(snapshot.error);
+            if (kDebugMode) {
+              print(snapshot.error);
+            }
             return _errorPage(snapshot.error.toString());
           } else {
             return _loadingScreenWidget();

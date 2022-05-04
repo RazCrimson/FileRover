@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:open_file/open_file.dart';
 import 'package:provider/provider.dart';
 
-import '../fs/utils.dart';
+import '../fs/local.dart';
 import '../providers/storage_path.dart';
 import '../widgets/create_directory.dart';
 import '../widgets/entity_context_menu.dart';
@@ -69,13 +69,13 @@ class FileBrowser extends StatelessWidget {
                               FileSystemEntity entity = entities[index];
                               return Card(
                                 child: ListTile(
-                                  leading: FileSystemUtils.isFile(entity)
-                                      ? FileIcon(FileSystemUtils.basename(entity), size: 48)
+                                  leading: LocalFsController.isFile(entity)
+                                      ? FileIcon(LocalFsController.basename(entity), size: 48)
                                       : const Icon(Icons.folder, size: 48),
-                                  title: Text(FileSystemUtils.basename(entity)),
+                                  title: Text(LocalFsController.basename(entity)),
                                   subtitle: subtitle(entity),
                                   onTap: () async {
-                                    if (FileSystemUtils.isDirectory(entity)) {
+                                    if (LocalFsController.isDirectory(entity)) {
                                       // Open the Directory
                                       storagePathProvider.openDirectory(entity as Directory);
                                     } else {
@@ -102,7 +102,7 @@ class FileBrowser extends StatelessWidget {
           subtitle += "Modified: " + "${snapshot.data!.modified}".substring(0, 10);
           if (entity is File) {
             int size = snapshot.data!.size;
-            subtitle += "   Size: ${FileSystemUtils.formatSizeToReadable(size)}";
+            subtitle += "   Size: ${LocalFsController.formatSizeToReadable(size)}";
           }
         }
         return Text(subtitle);
