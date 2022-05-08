@@ -7,21 +7,10 @@ import '../providers/sort_options.dart';
 class SortWidget extends StatelessWidget {
   const SortWidget({Key? key}) : super(key: key);
 
-  void handleSortByChange(BuildContext context, SortBy? sortBy) {
-    if (sortBy != null) {
-      Provider.of<SortOptions>(context, listen: false).sortBy = sortBy;
-    }
-  }
-
-  void handleSortOrderChange(BuildContext context, SortOrder? sortOrder) {
-    if (sortOrder != null) {
-      Provider.of<SortOptions>(context, listen: false).sortOrder = sortOrder;
-    }
-  }
-
-  @override
+ @override
   Widget build(BuildContext context) {
     const headerStyle = TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
+    final sortOptions = Provider.of<SortOptions>(context);
     return Dialog(
       child: Container(
         padding: const EdgeInsets.all(20),
@@ -30,49 +19,49 @@ class SortWidget extends StatelessWidget {
           children: <Widget>[
             const Text("Sort By", style: headerStyle),
             ListTile(
-                title: const Text('Name'),
-                leading: Radio<SortBy>(
-                    value: SortBy.name,
-                    groupValue: Provider.of<SortOptions>(context).sortBy,
-                    onChanged: (SortBy? sortBy) => handleSortByChange(context, sortBy)),
-                onTap: () => handleSortByChange(context, SortBy.name)),
+              title: const Text('Name'),
+              leading: Radio<SortBy>(
+                  value: SortBy.name,
+                  groupValue: sortOptions.sortBy,
+                  onChanged: (SortBy? sortBy) => sortOptions.sortBy = sortBy ?? sortOptions.sortBy),
+            ),
             ListTile(
-                title: const Text('Modified Time'),
-                leading: Radio<SortBy>(
-                    value: SortBy.time,
-                    groupValue: Provider.of<SortOptions>(context).sortBy,
-                    onChanged: (SortBy? sortBy) => handleSortByChange(context, sortBy)),
-                onTap: () => handleSortByChange(context, SortBy.time)),
+              title: const Text('Modified Time'),
+              leading: Radio<SortBy>(
+                  value: SortBy.time,
+                  groupValue: sortOptions.sortBy,
+                  onChanged: (SortBy? sortBy) => sortOptions.sortBy = sortBy ?? sortOptions.sortBy),
+            ),
             ListTile(
-                title: const Text('File Size'),
-                leading: Radio<SortBy>(
-                    value: SortBy.size,
-                    groupValue: Provider.of<SortOptions>(context).sortBy,
-                    onChanged: (SortBy? sortBy) => handleSortByChange(context, sortBy)),
-                onTap: () => handleSortByChange(context, SortBy.size)),
+              title: const Text('File Size'),
+              leading: Radio<SortBy>(
+                  value: SortBy.size,
+                  groupValue: sortOptions.sortBy,
+                  onChanged: (SortBy? sortBy) => sortOptions.sortBy = sortBy ?? sortOptions.sortBy),
+            ),
             ListTile(
-                title: const Text('File Type'),
-                leading: Radio<SortBy>(
-                    value: SortBy.type,
-                    groupValue: Provider.of<SortOptions>(context).sortBy,
-                    onChanged: (SortBy? sortBy) => handleSortByChange(context, sortBy)),
-                onTap: () => handleSortByChange(context, SortBy.type)),
+              title: const Text('File Type'),
+              leading: Radio<SortBy>(
+                  value: SortBy.type,
+                  groupValue: sortOptions.sortBy,
+                  onChanged: (SortBy? sortBy) => sortOptions.sortBy = sortBy ?? sortOptions.sortBy),
+            ),
             const SizedBox(height: 20),
             const Text("Sort Order", style: headerStyle),
             ListTile(
-                title: const Text('Ascending'),
-                leading: Radio<SortOrder>(
-                    value: SortOrder.ascending,
-                    groupValue: Provider.of<SortOptions>(context, listen: false).sortOrder,
-                    onChanged: (SortOrder? sortOrder) => handleSortOrderChange(context, sortOrder)),
-                onTap: () => handleSortOrderChange(context, SortOrder.ascending)),
+              title: const Text('Ascending'),
+              leading: Radio<SortOrder>(
+                  value: SortOrder.ascending,
+                  groupValue: sortOptions.sortOrder,
+                  onChanged: (SortOrder? sortOrder) => sortOptions.sortOrder = sortOrder ?? sortOptions.sortOrder),
+            ),
             ListTile(
-                title: const Text('Descending'),
-                leading: Radio<SortOrder>(
-                    value: SortOrder.descending,
-                    groupValue: Provider.of<SortOptions>(context, listen: false).sortOrder,
-                    onChanged: (SortOrder? sortOrder) => handleSortOrderChange(context, sortOrder)),
-                onTap: () => handleSortOrderChange(context, SortOrder.descending)),
+              title: const Text('Descending'),
+              leading: Radio<SortOrder>(
+                  value: SortOrder.descending,
+                  groupValue: sortOptions.sortOrder,
+                  onChanged: (SortOrder? sortOrder) => sortOptions.sortOrder = sortOrder ?? sortOptions.sortOrder),
+            ),
           ],
         ),
       ),
