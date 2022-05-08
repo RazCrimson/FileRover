@@ -1,6 +1,5 @@
-import 'dart:io';
-
 import 'package:file_rover/fs/contracts/entity.dart';
+import 'package:file_rover/providers/current_directory.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -19,16 +18,15 @@ class _RenameEntryWidget extends State<RenameEntryWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController renameField = TextEditingController();
-
+    final TextEditingController renameField = TextEditingController(text: widget.entity.basename);
     return Dialog(
       child: Container(
         padding: const EdgeInsets.all(20),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            ListTile(title: TextField(controller: renameField)),
-            TextButton(
+            ListTile(title: TextFormField(controller: renameField)),
+            ElevatedButton(
               onPressed: () async {
                 final entityName = renameField.text;
                 HapticFeedback.vibrate();
