@@ -1,9 +1,7 @@
 import 'package:file_icon/file_icon.dart';
 import 'package:file_rover/fs/contracts/directory.dart';
 import 'package:file_rover/fs/contracts/entity.dart';
-import 'package:file_rover/screens/utils.dart';
-import 'package:file_rover/widgets/app_back_button.dart';
-import 'package:file_rover/widgets/browser_back_button.dart';
+import 'package:file_rover/widgets/browser_back_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:open_file/open_file.dart';
 import 'package:provider/provider.dart';
@@ -38,7 +36,7 @@ class FileBrowser extends StatelessWidget {
   Widget build(BuildContext context) {
     final currentDirectory = Provider.of<CurrentDirectory>(context, listen: false);
 
-    return AppBackButton(
+    return BrowserBackHandler(
         child: Scaffold(
             appBar: AppBar(
               actions: [
@@ -53,7 +51,6 @@ class FileBrowser extends StatelessWidget {
                     icon: const Icon(Icons.sd_storage_rounded))
               ],
               title: const Text("File Rover"),
-              leading: const BrowserBackButton(),
             ),
             body: AnimatedContainer(
               margin: const EdgeInsets.all(10),

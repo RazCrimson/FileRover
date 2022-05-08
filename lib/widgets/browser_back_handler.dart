@@ -3,8 +3,8 @@ import 'package:provider/provider.dart';
 
 import '../providers/current_directory.dart';
 
-class AppBackButton extends StatefulWidget {
-  const AppBackButton({
+class BrowserBackHandler extends StatefulWidget {
+  const BrowserBackHandler({
     required this.child,
     Key? key,
   }) : super(key: key);
@@ -12,21 +12,19 @@ class AppBackButton extends StatefulWidget {
   final Widget child;
 
   @override
-  State<StatefulWidget> createState() => _AppBackButton();
+  State<StatefulWidget> createState() => _BrowserBackHandler();
 }
 
-class _AppBackButton extends State<AppBackButton> {
-  DateTime? lastInvocationAtRoot;
+class _BrowserBackHandler extends State<BrowserBackHandler> {
+  DateTime lastInvocationAtRoot = DateTime(2000);
 
-  _AppBackButton();
+  _BrowserBackHandler();
 
   Future<bool> handleButtonPress(BuildContext context) async {
     final currentDirProvider = Provider.of<CurrentDirectory>(context, listen: false);
 
     if (await currentDirProvider.isRootDirectory()) {
-      if (lastInvocationAtRoot != null && DateTime.now().difference(lastInvocationAtRoot!).inSeconds < 3) {
-        return true;
-      }
+      if (DateTime.now().difference(lastInvocationAtRoot).inSeconds < 3) return true;
       lastInvocationAtRoot = DateTime.now();
     } else {
       currentDirProvider.goToParentDirectory();
