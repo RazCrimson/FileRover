@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../fs/sorters/enums.dart';
-import '../providers/sort.dart';
+import '../providers/sort_options.dart';
 
 class PromptDialogWidget extends StatefulWidget {
   final FsDirectory dir;
@@ -39,10 +39,10 @@ class _CreateDirectoryWidget extends State<PromptDialogWidget> {
                   print(e);
                 }
                 Navigator.pop(context);
-                final val = Provider.of<SortProvider>(context, listen: false).sortBy;
-                Provider.of<SortProvider>(context, listen: false).sortBy = SortBy.name;
-                Provider.of<SortProvider>(context, listen: false).sortBy = SortBy.type;
-                Provider.of<SortProvider>(context, listen: false).sortBy = val;
+                final val = Provider.of<SortOptions>(context, listen: false).sortBy;
+                Provider.of<SortOptions>(context, listen: false).sortBy = SortBy.name;
+                Provider.of<SortOptions>(context, listen: false).sortBy = SortBy.type;
+                Provider.of<SortOptions>(context, listen: false).sortBy = val;
               },
               child: const Text('Create Folder'),
             )

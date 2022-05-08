@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../fs/sorters/enums.dart';
 
-class SortProvider with ChangeNotifier {
+class SortOptions with ChangeNotifier {
   SortBy _sortBy = SortBy.name;
   SortOrder _sortOrder = SortOrder.ascending;
 

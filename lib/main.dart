@@ -1,6 +1,6 @@
 import 'package:file_rover/fs/backends/local/controller.dart';
 import 'package:file_rover/providers/current_controller.dart';
-import 'package:file_rover/providers/sort.dart';
+import 'package:file_rover/providers/sort_options.dart';
 import 'package:file_rover/providers/current_directory.dart';
 import 'package:file_rover/screens/file_browser.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +19,7 @@ void main() {
             return currentDirNotifier..updateController(controller.controller);
           },
         ),
-        ChangeNotifierProvider(create: (_) => SortProvider()),
+        ChangeNotifierProvider(create: (_) => SortOptions()),
       ],
       child: const MyApp(),
     ),

@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/current_controller.dart';
-import '../providers/sort.dart';
+import '../providers/sort_options.dart';
 import '../providers/current_directory.dart';
 
 typedef _Builder = Widget Function(
@@ -59,7 +59,7 @@ class _FileListState extends State<FileList> {
   }
 
   Widget _body(BuildContext context) {
-    final sortProvider = Provider.of<SortProvider>(context);
+    final sortProvider = Provider.of<SortOptions>(context);
     final currentDirProvider = Provider.of<CurrentDirectory>(context);
 
     return FutureBuilder<List<FsEntity>>(
