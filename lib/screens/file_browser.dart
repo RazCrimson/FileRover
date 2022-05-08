@@ -41,13 +41,13 @@ class FileBrowser extends StatelessWidget {
             appBar: AppBar(
               actions: [
                 IconButton(
-                    onPressed: () => constructDialog(context, const CreateDirectoryWidget()),
+                    onPressed: () => showDialog(context: context, builder: (context) => const CreateDirectoryWidget()),
                     icon: const Icon(Icons.create_new_folder_outlined)),
                 IconButton(
-                    onPressed: () => constructDialog(context, const SortWidget()),
+                    onPressed: () => showDialog(context: context, builder: (context) => const SortWidget()),
                     icon: const Icon(Icons.sort_rounded)),
                 IconButton(
-                    onPressed: () => constructDialog(context, const SelectStorageWidget()),
+                    onPressed: () => showDialog(context: context, builder: (context) => const SelectStorageWidget()),
                     icon: const Icon(Icons.sd_storage_rounded))
               ],
               title: const Text("File Rover"),
@@ -78,7 +78,8 @@ class FileBrowser extends StatelessWidget {
                               OpenFile.open(entity.path);
                             }
                           },
-                          onLongPress: () => constructDialog(context, EntityContextMenu(entity: entity)),
+                          onLongPress: () =>
+                              showDialog(context: context, builder: (context) => EntityContextMenu(entity: entity)),
                         ),
                       );
                     },
