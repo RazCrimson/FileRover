@@ -20,7 +20,7 @@ class SelectStorageWidget extends StatelessWidget {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             final List<FsEntity> storageList = snapshot.data ?? [];
-            return Padding(
+            return SingleChildScrollView(
               padding: const EdgeInsets.all(10.0),
               child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -35,9 +35,7 @@ class SelectStorageWidget extends StatelessWidget {
                       .toList()),
             );
           }
-          return const Dialog(
-            child: CircularProgressIndicator(),
-          );
+          return const SizedBox(child: Center(child: CircularProgressIndicator()), height: 200, width: 200);
         },
       ),
     );
