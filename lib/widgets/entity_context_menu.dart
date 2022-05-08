@@ -61,7 +61,7 @@ class _EntityContextMenu extends State<EntityContextMenu> {
               spacingBox,
               Align(
                   alignment: Alignment.centerLeft,
-                  child: Text("Accessed: ${entity.changedTime}", textAlign: TextAlign.left)),
+                  child: Text("Accessed: ${entity.accessedTime}", textAlign: TextAlign.left)),
               spacingBox,
               Align(
                   alignment: Alignment.centerLeft,

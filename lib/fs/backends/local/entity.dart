@@ -24,7 +24,7 @@ abstract class LocalFsEntity extends FsEntity {
   String get dirname => _entity.parent.path;
 
   @override
-  DateTime get changedTime => _stat.changed;
+  DateTime get accessedTime => _stat.changed;
 
   @override
   DateTime get modifiedTime => _stat.modified;

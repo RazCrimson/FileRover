@@ -51,7 +51,7 @@ class FsEntityTimeSorter extends FsEntitySorter {
     final order = FsEntitySorter._getOrderMultiplier(ordering);
 
     // Create a sorted list of entities by timestamp.
-    entities.sort((a, b) => order * a.changedTime.compareTo(b.changedTime));
+    entities.sort((a, b) => order * a.accessedTime.compareTo(b.accessedTime));
     return entities;
   }
 }

@@ -13,7 +13,7 @@ abstract class FsEntity {
 
   String get basename;
 
-  DateTime get changedTime;
+  DateTime get accessedTime;
 
   DateTime get modifiedTime;
 
