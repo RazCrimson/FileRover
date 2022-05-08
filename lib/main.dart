@@ -32,9 +32,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      initialRoute: '/',
+      initialRoute: '/browser',
       routes: {
-        '/': (context) => const FileBrowser(),
+        '/browser': (context) => const FileBrowser(),
       },
       color: Colors.red,
     );
