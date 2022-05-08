@@ -20,7 +20,7 @@ class FileBrowser extends StatelessWidget {
 
   String getTimeValue(DateTime dateTime) {
     if (DateTime.now().difference(dateTime) < const Duration(days: 2)) return timeago.format(dateTime);
-    final dateFormat = DateFormat('dd-MM-yy');
+    final dateFormat = DateFormat('dd-MM-yyyy');
     return dateFormat.format(dateTime);
   }
 
@@ -64,10 +64,16 @@ class FileBrowser extends StatelessWidget {
                       FsEntity entity = entities[index];
                       return Card(
                         child: ListTile(
+                          minLeadingWidth: 8,
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+                          horizontalTitleGap: 8,
+                          minVerticalPadding: 1,
+                          dense: true,
+                          enableFeedback: true,
                           leading: entity.isDirectory()
                               ? const Icon(Icons.folder, size: 48)
                               : FileIcon(entity.basename, size: 48),
-                          title: Text(entity.basename),
+                          title: Text(entity.basename, overflow: TextOverflow.ellipsis),
                           subtitle: Text(getSubTitle(entity)),
                           onTap: () async {
                             if (entity.isDirectory()) {
