@@ -1,33 +1,34 @@
-import 'dart:io';
-
-import 'package:file_rover/providers/storage_path.dart';
+import 'package:file_rover/fs/contracts/entity.dart';
+import 'package:file_rover/providers/current_directory.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../fs/local.dart';
+import '../fs/contracts/directory.dart';
+import '../providers/current_controller.dart';
 
 class SelectStorageWidget extends StatelessWidget {
   const SelectStorageWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final storagePathProvider = Provider.of<StoragePathProvider>(context, listen: false);
+    final currentController = Provider.of<CurrentController>(context, listen: false);
+    final currentDirectory = Provider.of<CurrentDirectory>(context, listen: false);
 
     return Dialog(
-      child: FutureBuilder<List<Directory>>(
-        future: LocalFsController.getStorageList(),
+      child: FutureBuilder<List<FsEntity>>(
+        future: currentController.controller?.getStorageList(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            final List<FileSystemEntity> storageList = snapshot.data!;
+            final List<FsEntity> storageList = snapshot.data ?? [];
             return Padding(
               padding: const EdgeInsets.all(10.0),
               child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: storageList
-                      .map((e) => ListTile(
-                            title: Text(LocalFsController.basename(e)),
+                      .map((entity) => ListTile(
+                            title: Text(entity.basename),
                             onTap: () {
-                              storagePathProvider.openDirectory(e as Directory);
+                              currentDirectory.openDirectory(entity as FsDirectory);
                               Navigator.pop(context);
                             },
                           ))

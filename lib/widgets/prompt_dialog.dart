@@ -1,15 +1,15 @@
 
+import 'package:file_rover/fs/contracts/directory.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../fs/sorters/enums.dart';
-import '../fs/local.dart';
 import '../providers/sort.dart';
 
 class PromptDialogWidget extends StatefulWidget {
-  final String path;
+  final FsDirectory dir;
 
-  const PromptDialogWidget({Key? key, required this.path}) : super(key: key);
+  const PromptDialogWidget({Key? key, required this.dir}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _CreateDirectoryWidget();
@@ -34,7 +34,7 @@ class _CreateDirectoryWidget extends State<PromptDialogWidget> {
                 final folderName = folderEditorController.text;
                 try {
                   // Create Folder
-                  await LocalFsController.createFolder(widget.path, folderName);
+                  await widget.dir.createDirectory(folderName);
                 } catch (e) {
                   print(e);
                 }

@@ -1,15 +1,16 @@
-import 'dart:io';
+import 'package:file_rover/fs/contracts/directory.dart';
+import 'package:file_rover/fs/contracts/entity.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../fs/local.dart';
+import '../providers/current_controller.dart';
 import '../providers/sort.dart';
-import '../providers/storage_path.dart';
+import '../providers/current_directory.dart';
 
 typedef _Builder = Widget Function(
   BuildContext context,
-  List<FileSystemEntity> snapshot,
+  List<FsEntity> snapshot,
 );
 
 class FileList extends StatefulWidget {
@@ -40,16 +41,15 @@ class FileList extends StatefulWidget {
 class _FileListState extends State<FileList> {
   @override
   Widget build(BuildContext context) {
+    final currentController = Provider.of<CurrentController>(context, listen: false);
 
-    return FutureBuilder<List<Directory>?>(
-      future: LocalFsController.getStorageList(),
+    return FutureBuilder<List<FsDirectory>>(
+      future: currentController.controller?.getStorageList(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return _body(context);
         } else if (snapshot.hasError) {
-          if (kDebugMode) {
-            print(snapshot.error);
-          }
+          if (kDebugMode) print(snapshot.error);
           return _errorPage(snapshot.error.toString());
         } else {
           return _loadingScreenWidget();
@@ -60,24 +60,18 @@ class _FileListState extends State<FileList> {
 
   Widget _body(BuildContext context) {
     final sortProvider = Provider.of<SortProvider>(context);
-    final storagePathProvider = Provider.of<StoragePathProvider>(context);
+    final currentDirProvider = Provider.of<CurrentDirectory>(context);
 
-    return FutureBuilder<List<FileSystemEntity>>(
-        future:
-            LocalFsController.getSortedEntities(storagePathProvider.path, sortProvider.sortBy, sortProvider.sortOrder),
+    return FutureBuilder<List<FsEntity>>(
+        future: currentDirProvider.directory?.getSortedEntities(sortProvider.sortBy, sortProvider.sortOrder),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            List<FileSystemEntity> entities = snapshot.data!;
-            if (entities.isEmpty) {
-              return _emptyFolderWidget();
-            }
+            List<FsEntity> entities = snapshot.data ?? [];
+            if (entities.isEmpty) return _emptyFolderWidget();
             if (widget.hideHiddenEntity) {
-              entities = entities.where((element) {
-                if (LocalFsController.basename(element) == "" || LocalFsController.basename(element).startsWith('.')) {
-                  return false;
-                } else {
-                  return true;
-                }
+              entities = entities.where((entity) {
+                if (entity.basename == "" || entity.basename.startsWith('.')) return false;
+                return true;
               }).toList();
             }
             return widget.builder(context, entities);

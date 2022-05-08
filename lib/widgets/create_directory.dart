@@ -1,15 +1,13 @@
-
+import 'package:file_rover/providers/current_directory.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../fs/sorters/enums.dart';
-import '../fs/local.dart';
 import '../providers/sort.dart';
 
 class CreateDirectoryWidget extends StatefulWidget {
-  final String path;
-
-  const CreateDirectoryWidget({Key? key, required this.path}) : super(key: key);
+  const CreateDirectoryWidget({Key? key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _CreateDirectoryWidget();
@@ -18,7 +16,12 @@ class CreateDirectoryWidget extends StatefulWidget {
 class _CreateDirectoryWidget extends State<CreateDirectoryWidget> {
   @override
   Widget build(BuildContext context) {
+    final currentDirProvider = Provider.of<CurrentDirectory>(context);
     final TextEditingController folderEditorController = TextEditingController();
+
+    if (currentDirProvider.directory == null) {
+      return Container();
+    }
 
     return Dialog(
       child: Container(
@@ -30,11 +33,11 @@ class _CreateDirectoryWidget extends State<CreateDirectoryWidget> {
             TextButton(
               onPressed: () async {
                 final folderName = folderEditorController.text;
+                // Create Folder
                 try {
-                  // Create Folder
-                  await LocalFsController.createFolder(widget.path, folderName);
+                  await currentDirProvider.directory?.createDirectory(folderName);
                 } catch (e) {
-                  print(e);
+                  if (kDebugMode) print(e);
                 }
                 Navigator.pop(context);
                 final val = Provider.of<SortProvider>(context, listen: false).sortBy;

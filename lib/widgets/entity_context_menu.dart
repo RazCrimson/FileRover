@@ -1,16 +1,17 @@
 import 'dart:io';
 
+import 'package:file_rover/fs/contracts/entity.dart';
 import 'package:file_rover/widgets/rename_entry.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../fs/sorters/enums.dart';
-import '../fs/local.dart';
+import '../providers/current_controller.dart';
 import '../providers/sort.dart';
 
 class EntityContextMenu extends StatefulWidget {
-  final FileSystemEntity entity;
+  final FsEntity entity;
 
   const EntityContextMenu({Key? key, required this.entity}) : super(key: key);
 
@@ -48,50 +49,37 @@ class _EntityContextMenu extends State<EntityContextMenu> {
   Widget build(BuildContext context) {
     const headerStyle = TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
     const spacingBox = SizedBox(height: 10);
+
+    final currentController = Provider.of<CurrentController>(context, listen: false);
+    final entity = widget.entity;
+
     return Dialog(
-      child: Container(
-          padding: const EdgeInsets.all(20),
-          child: FutureBuilder<FileStat>(
-              future: widget.entity.stat(),
-              builder: (context, snapshot) {
-                final children = [
-                  Text(LocalFsController.basename(widget.entity), style: headerStyle),
-                  spacingBox,
-                  Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text("Path: ${widget.entity.path}", textAlign: TextAlign.left)),
-                  spacingBox
-                ];
-
-                if (snapshot.hasData) {
-                  children.addAll([
-                    Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text("Type: ${snapshot.data!.type}", textAlign: TextAlign.left)),
-                    spacingBox,
-                    Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text("Size: ${snapshot.data!.size}", textAlign: TextAlign.left)),
-                    spacingBox,
-                    Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text("Accessed: ${snapshot.data!.accessed}", textAlign: TextAlign.left)),
-                    spacingBox,
-                    Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text("Modified: ${snapshot.data!.modified}", textAlign: TextAlign.left)),
-                    spacingBox
-                  ]);
-                }
-
-                children.addAll([
-                  TextButton(onPressed: () => handleRename(context), child: const Text('Rename')),
-                  spacingBox,
-                  TextButton(onPressed: () => handleDelete(context), child: const Text('Delete'))
-                ]);
-
-                return Column(mainAxisSize: MainAxisSize.min, children: children);
-              })),
-    );
+        child: Container(
+            padding: const EdgeInsets.all(20),
+            child: Column(mainAxisSize: MainAxisSize.min, children: [
+              Text(entity.basename, style: headerStyle),
+              spacingBox,
+              Align(alignment: Alignment.centerLeft, child: Text("Path: ${entity.path}", textAlign: TextAlign.left)),
+              spacingBox,
+              Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text("Type: ${entity.isDirectory() ? 'Directory' : 'File'}", textAlign: TextAlign.left)),
+              spacingBox,
+              Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text("Size: ${entity.getReadableSize()}", textAlign: TextAlign.left)),
+              spacingBox,
+              Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text("Accessed: ${entity.changedTime}", textAlign: TextAlign.left)),
+              spacingBox,
+              Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text("Modified: ${entity.modifiedTime}", textAlign: TextAlign.left)),
+              spacingBox,
+              TextButton(onPressed: () => handleRename(context), child: const Text('Rename')),
+              spacingBox,
+              TextButton(onPressed: () => handleDelete(context), child: const Text('Delete'))
+            ])));
   }
 }

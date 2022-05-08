@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 
-import '../providers/storage_path.dart';
+import '../providers/current_directory.dart';
 
 class AppBackButton extends StatefulWidget {
   const AppBackButton({
@@ -21,15 +21,15 @@ class _AppBackButton extends State<AppBackButton> {
   _AppBackButton();
 
   Future<bool> handleButtonPress(BuildContext context) async {
-    final storagePathProvider = Provider.of<StoragePathProvider>(context, listen: false);
+    final currentDirProvider = Provider.of<CurrentDirectory>(context, listen: false);
 
-    if (await storagePathProvider.isRootDirectory()) {
+    if (await currentDirProvider.isRootDirectory()) {
       if (lastInvocationAtRoot != null && DateTime.now().difference(lastInvocationAtRoot!).inSeconds < 3) {
         return true;
       }
       lastInvocationAtRoot = DateTime.now();
     } else {
-      storagePathProvider.goToParentDirectory();
+      currentDirProvider.goToParentDirectory();
     }
     return false;
   }

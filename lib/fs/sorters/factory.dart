@@ -1,3 +1,4 @@
+import 'package:file_rover/fs/contracts/entity.dart';
 import 'package:file_rover/fs/sorters/enums.dart';
 
 import 'enums.dart';

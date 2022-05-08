@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-import '../providers/storage_path.dart';
+import '../providers/current_directory.dart';
 
 class BrowserBackButton extends StatefulWidget {
   const BrowserBackButton({Key? key}) : super(key: key);
@@ -17,16 +17,16 @@ class _BrowserBackButton extends State<BrowserBackButton> {
   _BrowserBackButton();
 
   Future<void> handleButtonPress(BuildContext context) async {
-    final storagePathProvider = Provider.of<StoragePathProvider>(context, listen: false);
+    final currentDirProvider = Provider.of<CurrentDirectory>(context, listen: false);
 
     HapticFeedback.vibrate();
-    if (await storagePathProvider.isRootDirectory()) {
+    if (await currentDirProvider.isRootDirectory()) {
       if (lastInvocationAtRoot != null && DateTime.now().difference(lastInvocationAtRoot!).inSeconds < 3) {
         await SystemChannels.platform.invokeMethod<void>('SystemNavigator.pop', true);
       }
       lastInvocationAtRoot = DateTime.now();
     } else {
-      storagePathProvider.goToParentDirectory();
+      currentDirProvider.goToParentDirectory();
     }
   }
 

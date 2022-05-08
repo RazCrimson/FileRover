@@ -1,6 +1,6 @@
-
 import 'dart:io';
 
+import 'package:file_rover/fs/contracts/entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -9,7 +9,7 @@ import '../fs/sorters/enums.dart';
 import '../providers/sort.dart';
 
 class RenameEntryWidget extends StatefulWidget {
-  final FileSystemEntity entity;
+  final FsEntity entity;
 
   const RenameEntryWidget({Key? key, required this.entity}) : super(key: key);
 
@@ -18,10 +18,7 @@ class RenameEntryWidget extends StatefulWidget {
 }
 
 class _RenameEntryWidget extends State<RenameEntryWidget> {
-
-  Future<void> handleRename(BuildContext context, String newName) async {
-
-  }
+  Future<void> handleRename(BuildContext context, String newName) async {}
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +36,7 @@ class _RenameEntryWidget extends State<RenameEntryWidget> {
                 final entityName = renameField.text;
                 HapticFeedback.vibrate();
                 try {
-                  await widget.entity.rename(widget.entity.parent.path + "/" + entityName);
+                  await widget.entity.rename(entityName);
                 } catch (e) {
                   print(e);
                 }
