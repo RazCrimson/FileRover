@@ -16,7 +16,7 @@ class SelectStorageWidget extends StatelessWidget {
 
     return Dialog(
       child: FutureBuilder<List<FsEntity>>(
-        future: currentController.controller?.getStorageList(),
+        future: currentController.controller?.getMountsLocations(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             final List<FsEntity> storageList = snapshot.data ?? [];

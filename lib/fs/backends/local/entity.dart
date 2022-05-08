@@ -32,14 +32,12 @@ abstract class LocalFsEntity extends FsEntity {
   @override
   LocalFsDirectory get parent => LocalFsDirectory(_entity.parent);
 
-  @override
   Future<LocalFsEntity> rename(String name) async {
     final renamedEntity = await _entity.rename(pth.join(dirname, name));
     if (isDirectory()) return LocalFsDirectory(renamedEntity as Directory);
     return LocalFsFile(renamedEntity);
   }
 
-  @override
   Future<void> delete({bool recursive = false}) async {
     await _entity.delete(recursive: recursive);
   }

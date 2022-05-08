@@ -10,7 +10,6 @@ class LocalFsDirectory extends LocalFsEntity with FsDirectory {
   LocalFsDirectory(Directory entity) : super(entity);
 
   /// Get a list of entities present in the given directory
-  @override
   Future<List<LocalFsEntity>> getEntities() async {
     PermissionStatus status = await Permission.manageExternalStorage.request();
     while (!status.isGranted) {
@@ -30,7 +29,6 @@ class LocalFsDirectory extends LocalFsEntity with FsDirectory {
   /// Creates a directory if it doesn't exist.
   ///
   /// Returns a future for the created directory
-  @override
   Future<LocalFsDirectory> createDirectory(String name) async {
     return Directory(p.join(path, name)).create().then((dir) => LocalFsDirectory(dir));
   }

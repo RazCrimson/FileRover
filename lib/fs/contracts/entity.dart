@@ -21,10 +21,6 @@ abstract class FsEntity {
 
   bool isDirectory();
 
-  Future<FsEntity> rename(String name);
-
-  Future<void> delete({bool recursive = false});
-
   String getReadableSize([int precision = 1]) {
     if (size == 0) return "0B";
 

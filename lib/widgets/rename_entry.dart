@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
+import '../providers/current_controller.dart';
+
 class RenameEntryWidget extends StatefulWidget {
   final FsEntity entity;
 
@@ -18,7 +20,11 @@ class _RenameEntryWidget extends State<RenameEntryWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final fsController = Provider.of<CurrentController>(context, listen: false).controller;
+    if (fsController == null) return Container();
+
     final TextEditingController renameField = TextEditingController(text: widget.entity.basename);
+
     return Dialog(
       child: Container(
         padding: const EdgeInsets.all(20),
@@ -31,7 +37,7 @@ class _RenameEntryWidget extends State<RenameEntryWidget> {
                 final entityName = renameField.text;
                 HapticFeedback.vibrate();
                 try {
-                  await widget.entity.rename(entityName);
+                  await fsController.rename(widget.entity, entityName);
                 } catch (e) {
                   print(e);
                 }

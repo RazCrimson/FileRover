@@ -44,7 +44,7 @@ class _FileListState extends State<FileList> {
     final currentController = Provider.of<CurrentController>(context, listen: false);
 
     return FutureBuilder<List<FsDirectory>>(
-      future: currentController.controller?.getStorageList(),
+      future: currentController.controller?.getMountsLocations(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return _body(context);
@@ -59,11 +59,14 @@ class _FileListState extends State<FileList> {
   }
 
   Widget _body(BuildContext context) {
-    final sortProvider = Provider.of<SortOptions>(context);
-    final currentDirProvider = Provider.of<CurrentDirectory>(context);
+    final sortOptions = Provider.of<SortOptions>(context);
+    final currentDir = Provider.of<CurrentDirectory>(context).directory;
+    final fsController = Provider.of<CurrentController>(context).controller;
+
+    if(fsController == null || currentDir == null) return Container();
 
     return FutureBuilder<List<FsEntity>>(
-        future: currentDirProvider.directory?.getSortedEntities(sortProvider.sortBy, sortProvider.sortOrder),
+        future: fsController.getSortedEntities(currentDir, sortOptions.sortBy, sortOptions.sortOrder),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             List<FsEntity> entities = snapshot.data ?? [];

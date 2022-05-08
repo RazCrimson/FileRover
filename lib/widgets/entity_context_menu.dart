@@ -20,15 +20,16 @@ class _EntityContextMenu extends State<EntityContextMenu> {
   _EntityContextMenu();
 
   Future<void> handleRename(BuildContext context) async {
-    Navigator.pop(context);
     await showDialog(context: context, builder: (context) => RenameEntryWidget(entity: widget.entity));
+    Navigator.pop(context);
     Provider.of<CurrentDirectory>(context, listen: false).manualRebuild();
   }
 
   Future<void> handleDelete(BuildContext context) async {
+    final fsController = Provider.of<CurrentController>(context, listen: false).controller;
     HapticFeedback.vibrate();
     try {
-      await widget.entity.delete(recursive: true);
+      await fsController?.delete(widget.entity);
     } catch (e) {
       print(e);
     }
@@ -40,8 +41,6 @@ class _EntityContextMenu extends State<EntityContextMenu> {
   Widget build(BuildContext context) {
     const headerStyle = TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
     const spacingBox = SizedBox(height: 10);
-
-    final currentController = Provider.of<CurrentController>(context, listen: false);
     final entity = widget.entity;
 
     return Dialog(

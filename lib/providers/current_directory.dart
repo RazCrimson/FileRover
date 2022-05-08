@@ -9,7 +9,7 @@ class CurrentDirectory with ChangeNotifier {
 
   void updateController(FsController? controller) {
     _fsController = controller;
-    _fsController?.getStorageList().then((storages) => _currentDirectory = storages[0]);
+    _fsController?.getMountsLocations().then((storages) => _currentDirectory = storages[0]);
   }
 
   FsDirectory? get directory => _currentDirectory;
@@ -27,7 +27,7 @@ class CurrentDirectory with ChangeNotifier {
   Future<bool> isRootDirectory() async {
     if (_fsController == null) return false;
 
-    final storages = await _fsController?.getStorageList() ?? [];
+    final storages = await _fsController?.getMountsLocations() ?? [];
     return storages.where((element) => element.path == _currentDirectory?.path).isNotEmpty;
   }
 

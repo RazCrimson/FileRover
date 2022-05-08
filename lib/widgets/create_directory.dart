@@ -1,3 +1,4 @@
+import 'package:file_rover/providers/current_controller.dart';
 import 'package:file_rover/providers/current_directory.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -13,10 +14,11 @@ class CreateDirectoryWidget extends StatefulWidget {
 class _CreateDirectoryWidget extends State<CreateDirectoryWidget> {
   @override
   Widget build(BuildContext context) {
-    final currentDirProvider = Provider.of<CurrentDirectory>(context);
+    final currentDir = Provider.of<CurrentDirectory>(context, listen: false).directory;
+    final fsController = Provider.of<CurrentController>(context, listen: false).controller;
     final TextEditingController folderEditorController = TextEditingController();
 
-    if (currentDirProvider.directory == null) {
+    if (currentDir == null) {
       return Container();
     }
 
@@ -32,7 +34,7 @@ class _CreateDirectoryWidget extends State<CreateDirectoryWidget> {
                 final folderName = folderEditorController.text;
                 // Create Folder
                 try {
-                  await currentDirProvider.directory?.createDirectory(folderName);
+                  await fsController?.createDirectory(currentDir, folderName);
                 } catch (e) {
                   if (kDebugMode) print(e);
                 }
