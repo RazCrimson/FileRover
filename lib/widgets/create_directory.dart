@@ -3,9 +3,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../fs/sorters/enums.dart';
-import '../providers/sort_options.dart';
-
 class CreateDirectoryWidget extends StatefulWidget {
   const CreateDirectoryWidget({Key? key}) : super(key: key);
 
@@ -40,10 +37,7 @@ class _CreateDirectoryWidget extends State<CreateDirectoryWidget> {
                   if (kDebugMode) print(e);
                 }
                 Navigator.pop(context);
-                final val = Provider.of<SortOptions>(context, listen: false).sortBy;
-                Provider.of<SortOptions>(context, listen: false).sortBy = SortBy.name;
-                Provider.of<SortOptions>(context, listen: false).sortBy = SortBy.type;
-                Provider.of<SortOptions>(context, listen: false).sortBy = val;
+                Provider.of<CurrentDirectory>(context, listen: false).manualRebuild();
               },
               child: const Text('Create Folder'),
             )

@@ -5,9 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-import '../fs/sorters/enums.dart';
-import '../providers/sort_options.dart';
-
 class RenameEntryWidget extends StatefulWidget {
   final FsEntity entity;
 
@@ -41,10 +38,7 @@ class _RenameEntryWidget extends State<RenameEntryWidget> {
                   print(e);
                 }
                 Navigator.pop(context);
-                final val = Provider.of<SortOptions>(context, listen: false).sortBy;
-                Provider.of<SortOptions>(context, listen: false).sortBy = SortBy.name;
-                Provider.of<SortOptions>(context, listen: false).sortBy = SortBy.type;
-                Provider.of<SortOptions>(context, listen: false).sortBy = val;
+                Provider.of<CurrentDirectory>(context, listen: false).manualRebuild();
               },
               child: const Text('Rename'),
             )

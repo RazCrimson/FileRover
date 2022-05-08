@@ -1,14 +1,11 @@
-import 'dart:io';
-
 import 'package:file_rover/fs/contracts/entity.dart';
 import 'package:file_rover/widgets/rename_entry.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-import '../fs/sorters/enums.dart';
 import '../providers/current_controller.dart';
-import '../providers/sort_options.dart';
+import '../providers/current_directory.dart';
 
 class EntityContextMenu extends StatefulWidget {
   final FsEntity entity;
@@ -25,10 +22,7 @@ class _EntityContextMenu extends State<EntityContextMenu> {
   Future<void> handleRename(BuildContext context) async {
     Navigator.pop(context);
     await showDialog(context: context, builder: (context) => RenameEntryWidget(entity: widget.entity));
-    final val = Provider.of<SortOptions>(context, listen: false).sortBy;
-    Provider.of<SortOptions>(context, listen: false).sortBy = SortBy.name;
-    Provider.of<SortOptions>(context, listen: false).sortBy = SortBy.type;
-    Provider.of<SortOptions>(context, listen: false).sortBy = val;
+    Provider.of<CurrentDirectory>(context, listen: false).manualRebuild();
   }
 
   Future<void> handleDelete(BuildContext context) async {
@@ -39,10 +33,7 @@ class _EntityContextMenu extends State<EntityContextMenu> {
       print(e);
     }
     Navigator.pop(context);
-    final val = Provider.of<SortOptions>(context, listen: false).sortBy;
-    Provider.of<SortOptions>(context, listen: false).sortBy = SortBy.name;
-    Provider.of<SortOptions>(context, listen: false).sortBy = SortBy.type;
-    Provider.of<SortOptions>(context, listen: false).sortBy = val;
+    Provider.of<CurrentDirectory>(context, listen: false).manualRebuild();
   }
 
   @override

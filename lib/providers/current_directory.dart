@@ -36,4 +36,8 @@ class CurrentDirectory with ChangeNotifier {
     if (await isRootDirectory() || _currentDirectory == null) return;
     openDirectory(_currentDirectory?.parent);
   }
+
+  void manualRebuild() {
+    notifyListeners();
+  }
 }
