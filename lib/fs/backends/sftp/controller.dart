@@ -7,9 +7,15 @@ import 'directory.dart';
 import 'file.dart';
 
 class SftpFsController extends FsController<SftpFsEntity, SftpFsFile, SftpFsDirectory> {
+  final SSHClient _sshClient;
   final SftpClient _sftpClient;
 
-  SftpFsController(this._sftpClient);
+  SftpFsController(this._sshClient, this._sftpClient);
+
+  @override
+  String getIdentity() {
+    return '${_sshClient.username}@${_sshClient.socket}';
+  }
 
   Future<SftpName> getMatchingSftpName(SftpFsDirectory directory, String name) async {
     final sftpNames = await _sftpClient.listdir(directory.path);

@@ -1,10 +1,23 @@
+import 'package:equatable/equatable.dart';
+
 import '../sorters/enums.dart';
 import '../sorters/factory.dart';
 import 'directory.dart';
 import 'entity.dart';
 import 'file.dart';
 
-abstract class FsController<Entity extends FsEntity, File extends FsFile, Directory extends FsDirectory> {
+abstract class FsController<Entity extends FsEntity, File extends FsFile, Directory extends FsDirectory>
+    extends Equatable {
+  String getIdentity();
+
+  // Implement props for equality checks
+  @override
+  List<Object> get props => [getIdentity()];
+
+  // To generate toString methods
+  @override
+  bool get stringify => true;
+
   // Delete an entity
   Future<void> delete(Entity entity);
 
@@ -15,12 +28,12 @@ abstract class FsController<Entity extends FsEntity, File extends FsFile, Direct
   ///
   /// Returns an empty list if there is no storage
   Future<List<Directory>> getMountsLocations();
-  
+
   /// Creates a directory if it doesn't exist.
   ///
   /// Returns a future for the created directory
   Future<FsDirectory> createDirectory(Directory directory, String name);
-  
+
   /// Get a list of entities present in the given directory
   Future<List<FsEntity>> getEntities(Directory directory);
 

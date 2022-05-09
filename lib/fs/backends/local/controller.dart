@@ -7,9 +7,11 @@ import 'directory.dart';
 import 'file.dart';
 
 class LocalFsController extends FsController<LocalFsEntity, LocalFsFile, LocalFsDirectory> {
-  /// Get a list of available storage areas in the device
-  ///
-  /// Returns an empty list if there is no storage
+  @override
+  String getIdentity() {
+    return 'Local Storage';
+  }
+
   @override
   Future<List<LocalFsDirectory>> getMountsLocations() async {
     if (!Platform.isAndroid) {
@@ -24,7 +26,6 @@ class LocalFsController extends FsController<LocalFsEntity, LocalFsFile, LocalFs
     }).toList();
   }
 
-  /// Get a list of entities present in the given directory
   @override
   Future<List<LocalFsEntity>> getEntities(LocalFsDirectory directory) {
     // Chaining calls as LocalFs actions don't rely on a connection
