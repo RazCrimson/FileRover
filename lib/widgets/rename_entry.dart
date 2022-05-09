@@ -26,7 +26,7 @@ class _RenameEntryWidget extends State<RenameEntryWidget> {
     final TextEditingController renameField = TextEditingController(text: widget.entity.basename);
 
     return Dialog(
-      child: Container(
+      child: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
           mainAxisSize: MainAxisSize.min,

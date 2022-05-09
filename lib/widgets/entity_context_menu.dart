@@ -44,7 +44,7 @@ class _EntityContextMenu extends State<EntityContextMenu> {
     final entity = widget.entity;
 
     return Dialog(
-        child: Container(
+        child: SingleChildScrollView(
             padding: const EdgeInsets.all(20),
             child: Column(mainAxisSize: MainAxisSize.min, children: [
               Text(entity.basename, style: headerStyle),

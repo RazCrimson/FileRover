@@ -12,7 +12,7 @@ class SortWidget extends StatelessWidget {
     const headerStyle = TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
     final sortOptions = Provider.of<SortOptions>(context);
     return Dialog(
-      child: Container(
+      child: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
           mainAxisSize: MainAxisSize.min,

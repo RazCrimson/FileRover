@@ -23,7 +23,7 @@ class _CreateDirectoryWidget extends State<CreateDirectoryWidget> {
     }
 
     return Dialog(
-      child: Container(
+      child: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
           mainAxisSize: MainAxisSize.min,
