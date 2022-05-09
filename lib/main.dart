@@ -1,16 +1,19 @@
 import 'package:file_rover/fs/backends/local/controller.dart';
 import 'package:file_rover/providers/current_controller.dart';
+import 'package:file_rover/providers/session.dart';
 import 'package:file_rover/providers/sort_options.dart';
 import 'package:file_rover/providers/current_directory.dart';
 import 'package:file_rover/screens/file_browser.dart';
+import 'package:file_rover/screens/select_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+void main() async {
   final fsController = LocalFsController();
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => SessionProvider([fsController])),
         ChangeNotifierProvider(create: (_) => CurrentController(fsController)),
         ChangeNotifierProxyProvider<CurrentController, CurrentDirectory>(
           create: (_) => CurrentDirectory(),
@@ -32,8 +35,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      initialRoute: '/browser',
+      initialRoute: '/storages',
       routes: {
+        '/storages': (context) => const SelectStorage(),
         '/browser': (context) => const FileBrowser(),
       },
       color: Colors.red,
