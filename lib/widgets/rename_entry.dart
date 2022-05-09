@@ -1,7 +1,9 @@
+import 'package:dartssh2/dartssh2.dart';
 import 'package:file_rover/fs/contracts/entity.dart';
 import 'package:file_rover/providers/current_directory.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/current_controller.dart';
@@ -38,8 +40,8 @@ class _RenameEntryWidget extends State<RenameEntryWidget> {
                 HapticFeedback.vibrate();
                 try {
                   await fsController.rename(widget.entity, entityName);
-                } catch (e) {
-                  print(e);
+                } on SftpError catch (e, _) {
+                  Fluttertoast.showToast(msg: e.message);
                 }
                 Navigator.pop(context);
                 Provider.of<CurrentDirectory>(context, listen: false).manualRebuild();
