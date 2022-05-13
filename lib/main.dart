@@ -1,8 +1,6 @@
 import 'package:file_rover/fs/backends/local/controller.dart';
-import 'package:file_rover/providers/current_controller.dart';
+import 'package:file_rover/providers/browser.dart';
 import 'package:file_rover/providers/session.dart';
-import 'package:file_rover/providers/sort_options.dart';
-import 'package:file_rover/providers/current_directory.dart';
 import 'package:file_rover/screens/file_browser.dart';
 import 'package:file_rover/screens/select_storage.dart';
 import 'package:flutter/material.dart';
@@ -14,15 +12,7 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => SessionProvider([fsController])),
-        ChangeNotifierProvider(create: (_) => CurrentController(fsController)),
-        ChangeNotifierProxyProvider<CurrentController, CurrentDirectory>(
-          create: (_) => CurrentDirectory(),
-          update: (_, controller, currentDirNotifier) {
-            currentDirNotifier ??= CurrentDirectory();
-            return currentDirNotifier..updateController(controller.controller);
-          },
-        ),
-        ChangeNotifierProvider(create: (_) => SortOptions()),
+        ChangeNotifierProvider(create: (_) => BrowserProvider()),
       ],
       child: const MyApp(),
     ),

@@ -1,10 +1,10 @@
 import 'package:file_rover/fs/backends/local/controller.dart';
 import 'package:file_rover/fs/backends/sftp/controller.dart';
-import 'package:file_rover/providers/current_controller.dart';
 import 'package:file_rover/providers/session.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 
+import '../providers/browser.dart';
 import '../widgets/add_storage.dart';
 
 class SelectStorage extends StatelessWidget {
@@ -13,7 +13,7 @@ class SelectStorage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final sessionProvider = Provider.of<SessionProvider>(context);
-    final controllerProvider = Provider.of<CurrentController>(context, listen: false);
+    final browserProvider = Provider.of<BrowserProvider>(context, listen: false);
 
     return Scaffold(
         appBar: AppBar(
@@ -41,7 +41,7 @@ class SelectStorage extends StatelessWidget {
                       leading: const Icon(Icons.phone_android, size: 48),
                       title: const Text("Local Storage", overflow: TextOverflow.ellipsis),
                       onTap: () {
-                        controllerProvider.controller = controller;
+                        browserProvider.controller = controller;
                         Navigator.pushNamed(context, '/browser');
                       },
                     ),
@@ -56,7 +56,7 @@ class SelectStorage extends StatelessWidget {
                       leading: const Icon(Icons.storage_sharp, size: 48),
                       title: Text(controller.getIdentity(), overflow: TextOverflow.ellipsis),
                       onTap: () {
-                        controllerProvider.controller = controller;
+                        browserProvider.controller = controller;
                         Navigator.pushNamed(context, '/browser');
                       },
                     ),
@@ -71,7 +71,7 @@ class SelectStorage extends StatelessWidget {
                       leading: const Icon(Icons.question_mark_sharp, size: 48),
                       title: Text(controller.getIdentity(), overflow: TextOverflow.ellipsis),
                       onTap: () {
-                        controllerProvider.controller = controller;
+                        browserProvider.controller = controller;
                         Navigator.pushNamed(context, '/browser');
                       },
                     ),

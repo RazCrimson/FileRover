@@ -4,9 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../providers/current_controller.dart';
-import '../providers/sort_options.dart';
-import '../providers/current_directory.dart';
+import '../providers/browser.dart';
 
 typedef _Builder = Widget Function(
   BuildContext context,
@@ -41,10 +39,10 @@ class FileList extends StatefulWidget {
 class _FileListState extends State<FileList> {
   @override
   Widget build(BuildContext context) {
-    final currentController = Provider.of<CurrentController>(context, listen: false);
+    final browserProvider = Provider.of<BrowserProvider>(context);
 
     return FutureBuilder<List<FsDirectory>>(
-      future: currentController.controller?.getMountsLocations(),
+      future: browserProvider.controller.getMountsLocations(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return _body(context);
@@ -59,14 +57,10 @@ class _FileListState extends State<FileList> {
   }
 
   Widget _body(BuildContext context) {
-    final sortOptions = Provider.of<SortOptions>(context);
-    final currentDir = Provider.of<CurrentDirectory>(context).directory;
-    final fsController = Provider.of<CurrentController>(context).controller;
-
-    if(fsController == null || currentDir == null) return Container();
+    final browserProvider = Provider.of<BrowserProvider>(context);
 
     return FutureBuilder<List<FsEntity>>(
-        future: fsController.getSortedEntities(currentDir, sortOptions.sortBy, sortOptions.sortOrder),
+        future: browserProvider.getSortedEntitiesInCurrentDir(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             List<FsEntity> entities = snapshot.data ?? [];

@@ -1,22 +1,20 @@
 import 'package:file_rover/fs/contracts/entity.dart';
-import 'package:file_rover/providers/current_directory.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../fs/contracts/directory.dart';
-import '../providers/current_controller.dart';
+import '../providers/browser.dart';
 
 class SelectStorageWidget extends StatelessWidget {
   const SelectStorageWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final currentController = Provider.of<CurrentController>(context, listen: false);
-    final currentDirectory = Provider.of<CurrentDirectory>(context, listen: false);
+    final browserProvider = Provider.of<BrowserProvider>(context, listen: false);
 
     return Dialog(
       child: FutureBuilder<List<FsEntity>>(
-        future: currentController.controller?.getMountsLocations(),
+        future: browserProvider.controller.getMountsLocations(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             final List<FsEntity> storageList = snapshot.data ?? [];
@@ -28,7 +26,7 @@ class SelectStorageWidget extends StatelessWidget {
                       .map((entity) => ListTile(
                             title: Text(entity.basename),
                             onTap: () {
-                              currentDirectory.openDirectory(entity as FsDirectory);
+                              browserProvider.mountLocation = entity as FsDirectory;
                               Navigator.pop(context);
                             },
                           ))

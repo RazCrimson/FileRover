@@ -6,8 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
-import '../providers/current_controller.dart';
-import '../providers/current_directory.dart';
+import '../providers/browser.dart';
 
 class EntityContextMenu extends StatefulWidget {
   final FsEntity entity;
@@ -24,19 +23,20 @@ class _EntityContextMenu extends State<EntityContextMenu> {
   Future<void> handleRename(BuildContext context) async {
     await showDialog(context: context, builder: (context) => RenameEntryWidget(entity: widget.entity));
     Navigator.pop(context);
-    Provider.of<CurrentDirectory>(context, listen: false).manualRebuild();
+    Provider.of<BrowserProvider>(context, listen: false).manualRebuild();
   }
 
   Future<void> handleDelete(BuildContext context) async {
-    final fsController = Provider.of<CurrentController>(context, listen: false).controller;
+    final browserProvider = Provider.of<BrowserProvider>(context, listen: false);
+
     HapticFeedback.vibrate();
     try {
-      await fsController?.delete(widget.entity);
+      await browserProvider.controller.delete(widget.entity);
     } on SftpError catch (e, _) {
       Fluttertoast.showToast(msg: e.message);
     }
     Navigator.pop(context);
-    Provider.of<CurrentDirectory>(context, listen: false).manualRebuild();
+    browserProvider.manualRebuild();
   }
 
   @override

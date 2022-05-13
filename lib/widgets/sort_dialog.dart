@@ -2,15 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../fs/sorters/enums.dart';
-import '../providers/sort_options.dart';
+import '../providers/browser.dart';
 
 class SortWidget extends StatelessWidget {
   const SortWidget({Key? key}) : super(key: key);
 
- @override
+  @override
   Widget build(BuildContext context) {
+    final browserProvider = Provider.of<BrowserProvider>(context);
     const headerStyle = TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
-    final sortOptions = Provider.of<SortOptions>(context);
+
     return Dialog(
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
@@ -22,29 +23,29 @@ class SortWidget extends StatelessWidget {
               title: const Text('Name'),
               leading: Radio<SortBy>(
                   value: SortBy.name,
-                  groupValue: sortOptions.sortBy,
-                  onChanged: (SortBy? sortBy) => sortOptions.sortBy = sortBy ?? sortOptions.sortBy),
+                  groupValue: browserProvider.sortBy,
+                  onChanged: (SortBy? sortBy) => browserProvider.sortBy = sortBy ?? browserProvider.sortBy),
             ),
             ListTile(
               title: const Text('Modified Time'),
               leading: Radio<SortBy>(
                   value: SortBy.time,
-                  groupValue: sortOptions.sortBy,
-                  onChanged: (SortBy? sortBy) => sortOptions.sortBy = sortBy ?? sortOptions.sortBy),
+                  groupValue: browserProvider.sortBy,
+                  onChanged: (SortBy? sortBy) => browserProvider.sortBy = sortBy ?? browserProvider.sortBy),
             ),
             ListTile(
               title: const Text('File Size'),
               leading: Radio<SortBy>(
                   value: SortBy.size,
-                  groupValue: sortOptions.sortBy,
-                  onChanged: (SortBy? sortBy) => sortOptions.sortBy = sortBy ?? sortOptions.sortBy),
+                  groupValue: browserProvider.sortBy,
+                  onChanged: (SortBy? sortBy) => browserProvider.sortBy = sortBy ?? browserProvider.sortBy),
             ),
             ListTile(
               title: const Text('File Type'),
               leading: Radio<SortBy>(
                   value: SortBy.type,
-                  groupValue: sortOptions.sortBy,
-                  onChanged: (SortBy? sortBy) => sortOptions.sortBy = sortBy ?? sortOptions.sortBy),
+                  groupValue: browserProvider.sortBy,
+                  onChanged: (SortBy? sortBy) => browserProvider.sortBy = sortBy ?? browserProvider.sortBy),
             ),
             const SizedBox(height: 20),
             const Text("Sort Order", style: headerStyle),
@@ -52,15 +53,17 @@ class SortWidget extends StatelessWidget {
               title: const Text('Ascending'),
               leading: Radio<SortOrder>(
                   value: SortOrder.ascending,
-                  groupValue: sortOptions.sortOrder,
-                  onChanged: (SortOrder? sortOrder) => sortOptions.sortOrder = sortOrder ?? sortOptions.sortOrder),
+                  groupValue: browserProvider.sortOrder,
+                  onChanged: (SortOrder? sortOrder) =>
+                      browserProvider.sortOrder = sortOrder ?? browserProvider.sortOrder),
             ),
             ListTile(
               title: const Text('Descending'),
               leading: Radio<SortOrder>(
                   value: SortOrder.descending,
-                  groupValue: sortOptions.sortOrder,
-                  onChanged: (SortOrder? sortOrder) => sortOptions.sortOrder = sortOrder ?? sortOptions.sortOrder),
+                  groupValue: browserProvider.sortOrder,
+                  onChanged: (SortOrder? sortOrder) =>
+                      browserProvider.sortOrder = sortOrder ?? browserProvider.sortOrder),
             ),
           ],
         ),

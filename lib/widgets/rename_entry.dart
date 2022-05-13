@@ -1,12 +1,11 @@
 import 'package:dartssh2/dartssh2.dart';
 import 'package:file_rover/fs/contracts/entity.dart';
-import 'package:file_rover/providers/current_directory.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
-import '../providers/current_controller.dart';
+import '../providers/browser.dart';
 
 class RenameEntryWidget extends StatefulWidget {
   final FsEntity entity;
@@ -22,8 +21,7 @@ class _RenameEntryWidget extends State<RenameEntryWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final fsController = Provider.of<CurrentController>(context, listen: false).controller;
-    if (fsController == null) return Container();
+    final browserProvider = Provider.of<BrowserProvider>(context, listen: false);
 
     final TextEditingController renameField = TextEditingController(text: widget.entity.basename);
 
@@ -39,12 +37,12 @@ class _RenameEntryWidget extends State<RenameEntryWidget> {
                 final entityName = renameField.text;
                 HapticFeedback.vibrate();
                 try {
-                  await fsController.rename(widget.entity, entityName);
+                  await browserProvider.controller.rename(widget.entity, entityName);
                 } on SftpError catch (e, _) {
                   Fluttertoast.showToast(msg: e.message);
                 }
                 Navigator.pop(context);
-                Provider.of<CurrentDirectory>(context, listen: false).manualRebuild();
+                browserProvider.manualRebuild();
               },
               child: const Text('Rename'),
             )

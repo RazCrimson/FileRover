@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 
-import '../providers/current_directory.dart';
+import '../providers/browser.dart';
 
 class BrowserBackHandler extends StatefulWidget {
   const BrowserBackHandler({
@@ -21,13 +21,13 @@ class _BrowserBackHandler extends State<BrowserBackHandler> {
   _BrowserBackHandler();
 
   Future<bool> handleButtonPress(BuildContext context) async {
-    final currentDirProvider = Provider.of<CurrentDirectory>(context, listen: false);
+    final browserProvider = Provider.of<BrowserProvider>(context, listen: false);
 
-    if (await currentDirProvider.isRootDirectory()) {
+    if (await browserProvider.isMountLocation()) {
       if (DateTime.now().difference(lastInvocationAtRoot).inSeconds < 3) return true;
       lastInvocationAtRoot = DateTime.now();
     } else {
-      currentDirProvider.goToParentDirectory();
+      browserProvider.goToParentDirectory();
     }
     return false;
   }

@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:intl/intl.dart';
 
-import '../providers/current_directory.dart';
+import '../providers/browser.dart';
 import '../widgets/create_directory.dart';
 import '../widgets/entity_context_menu.dart';
 import '../widgets/file_list.dart';
@@ -34,7 +34,7 @@ class FileBrowser extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currentDirectory = Provider.of<CurrentDirectory>(context, listen: false);
+    final browserProvider = Provider.of<BrowserProvider>(context, listen: false);
 
     return BrowserBackHandler(
         child: Scaffold(
@@ -78,7 +78,7 @@ class FileBrowser extends StatelessWidget {
                           onTap: () async {
                             if (entity.isDirectory()) {
                               // Open the Directory
-                              currentDirectory.openDirectory(entity as FsDirectory);
+                              browserProvider.openDirectory(entity as FsDirectory);
                             } else {
                               // Open the File
                               OpenFile.open(entity.path);

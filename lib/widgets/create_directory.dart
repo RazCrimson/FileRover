@@ -1,8 +1,8 @@
-import 'package:file_rover/providers/current_controller.dart';
-import 'package:file_rover/providers/current_directory.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import '../providers/browser.dart';
 
 class CreateDirectoryWidget extends StatefulWidget {
   const CreateDirectoryWidget({Key? key}) : super(key: key);
@@ -14,13 +14,8 @@ class CreateDirectoryWidget extends StatefulWidget {
 class _CreateDirectoryWidget extends State<CreateDirectoryWidget> {
   @override
   Widget build(BuildContext context) {
-    final currentDir = Provider.of<CurrentDirectory>(context, listen: false).directory;
-    final fsController = Provider.of<CurrentController>(context, listen: false).controller;
+    final browserProvider = Provider.of<BrowserProvider>(context, listen: false);
     final TextEditingController folderEditorController = TextEditingController();
-
-    if (currentDir == null) {
-      return Container();
-    }
 
     return Dialog(
       child: SingleChildScrollView(
@@ -34,12 +29,12 @@ class _CreateDirectoryWidget extends State<CreateDirectoryWidget> {
                 final folderName = folderEditorController.text;
                 // Create Folder
                 try {
-                  await fsController?.createDirectory(currentDir, folderName);
+                  await browserProvider.controller.createDirectory(browserProvider.directory, folderName);
                 } catch (e) {
                   if (kDebugMode) print(e);
                 }
                 Navigator.pop(context);
-                Provider.of<CurrentDirectory>(context, listen: false).manualRebuild();
+                browserProvider.manualRebuild();
               },
               child: const Text('Create Folder'),
             )
