@@ -12,6 +12,7 @@ import '../providers/browser.dart';
 import '../widgets/create_directory.dart';
 import '../widgets/entity_context_menu.dart';
 import '../widgets/file_list.dart';
+import '../widgets/path_bar.dart';
 import '../widgets/select_storage.dart';
 import '../widgets/sort_dialog.dart';
 
@@ -51,6 +52,7 @@ class FileBrowser extends StatelessWidget {
                     icon: const Icon(Icons.sd_storage_rounded))
               ],
               title: const Text("File Rover"),
+              bottom: const PathBar(),
             ),
             body: AnimatedContainer(
               margin: const EdgeInsets.all(10),
