@@ -19,7 +19,7 @@ class SftpFsController extends FsController<SftpFsEntity, SftpFsFile, SftpFsDire
 
   Future<SftpName> getMatchingSftpName(SftpFsDirectory directory, String name) async {
     final sftpNames = await _sftpClient.listdir(directory.path);
-    return sftpNames.where((sftpName) => sftpName.filename == '.').first;
+    return sftpNames.where((sftpName) => sftpName.filename == name).first;
   }
 
   @override
