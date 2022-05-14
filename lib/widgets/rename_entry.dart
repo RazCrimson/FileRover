@@ -1,8 +1,6 @@
-import 'package:dartssh2/dartssh2.dart';
 import 'package:file_rover/fs/contracts/entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/browser.dart';
@@ -38,8 +36,10 @@ class _RenameEntryWidget extends State<RenameEntryWidget> {
                 HapticFeedback.vibrate();
                 try {
                   await browserProvider.controller.rename(widget.entity, entityName);
-                } on SftpError catch (e, _) {
-                  Fluttertoast.showToast(msg: e.message);
+                } catch (e) {
+                  ScaffoldMessenger.of(context)
+                    ..hideCurrentSnackBar()
+                    ..showSnackBar(SnackBar(content: Text(e.toString()), backgroundColor: Colors.red));
                 }
                 Navigator.pop(context);
                 browserProvider.manualRebuild();

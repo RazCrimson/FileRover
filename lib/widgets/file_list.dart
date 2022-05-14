@@ -48,6 +48,12 @@ class _FileListState extends State<FileList> {
           return _body(context);
         } else if (snapshot.hasError) {
           if (kDebugMode) print(snapshot.error);
+          browserProvider.isMountLocation().then((value) => browserProvider.goToParentDirectory());
+          WidgetsBinding.instance?.addPostFrameCallback((_) {
+            ScaffoldMessenger.of(context)
+              ..removeCurrentSnackBar()
+              ..showSnackBar(SnackBar(content: Text(snapshot.error.toString()), backgroundColor: Colors.red));
+          });
           return _errorPage(snapshot.error.toString());
         } else {
           return _loadingScreenWidget();
@@ -76,6 +82,12 @@ class _FileListState extends State<FileList> {
             if (kDebugMode) {
               print(snapshot.error);
             }
+            browserProvider.isMountLocation().then((value) => browserProvider.goToParentDirectory());
+            WidgetsBinding.instance?.addPostFrameCallback((_) {
+              ScaffoldMessenger.of(context)
+                ..removeCurrentSnackBar()
+                ..showSnackBar(SnackBar(content: Text(snapshot.error.toString()), backgroundColor: Colors.red));
+            });
             return _errorPage(snapshot.error.toString());
           } else {
             return _loadingScreenWidget();
