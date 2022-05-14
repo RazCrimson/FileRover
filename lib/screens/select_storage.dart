@@ -40,8 +40,9 @@ class SelectStorage extends StatelessWidget {
                       enableFeedback: true,
                       leading: const Icon(Icons.phone_android, size: 48),
                       title: const Text("Local Storage", overflow: TextOverflow.ellipsis),
-                      onTap: () {
+                      onTap: () async {
                         browserProvider.controller = controller;
+                        await browserProvider.openDefaultMountLocation();
                         Navigator.pushNamed(context, '/browser');
                       },
                     ),
@@ -55,8 +56,9 @@ class SelectStorage extends StatelessWidget {
                       enableFeedback: true,
                       leading: const Icon(Icons.storage_sharp, size: 48),
                       title: Text(controller.getIdentity(), overflow: TextOverflow.ellipsis),
-                      onTap: () {
+                      onTap: () async {
                         browserProvider.controller = controller;
+                        await browserProvider.openDefaultMountLocation();
                         Navigator.pushNamed(context, '/browser');
                       },
                     ),
@@ -70,8 +72,9 @@ class SelectStorage extends StatelessWidget {
                       enableFeedback: true,
                       leading: const Icon(Icons.question_mark_sharp, size: 48),
                       title: Text(controller.getIdentity(), overflow: TextOverflow.ellipsis),
-                      onTap: () {
+                      onTap: () async {
                         browserProvider.controller = controller;
+                        await browserProvider.openDefaultMountLocation();
                         Navigator.pushNamed(context, '/browser');
                       },
                     ),

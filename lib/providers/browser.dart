@@ -6,7 +6,7 @@ import '../fs/contracts/entity.dart';
 import '../fs/sorters/enums.dart';
 
 class BrowserProvider with ChangeNotifier {
-  late FsController _currentController;
+  late FsController controller;
   late FsDirectory _currentDir, _currentMount;
 
   SortBy _sortBy = SortBy.name;
@@ -32,13 +32,6 @@ class BrowserProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  FsController get controller => _currentController;
-
-  set controller(FsController controller) {
-    _currentController = controller;
-    _currentController.getMountsLocations().then((storages) => mountLocation = storages[0]);
-  }
-
   FsDirectory get directory => _currentDir;
 
   set directory(FsDirectory dir) {
@@ -54,9 +47,8 @@ class BrowserProvider with ChangeNotifier {
   void openDirectory(FsDirectory dir) => directory = dir;
 
   Future<List<FsEntity>> getSortedEntitiesInCurrentDir() async {
-    return _currentController.getSortedEntities(directory, sortBy, sortOrder);
+    return controller.getSortedEntities(directory, sortBy, sortOrder);
   }
-
 
   /// Jumps to the parent directory of currently opened directory if the parent is accessible.
   Future<void> goToParentDirectory() async {
@@ -73,8 +65,14 @@ class BrowserProvider with ChangeNotifier {
 
   /// return true if current directory is the root. false, if the current directory not on root of the storage.
   Future<bool> isMountLocation() async {
-    final storages = await _currentController.getMountsLocations();
+    final storages = await controller.getMountsLocations();
     return storages.where((element) => element.path == _currentDir.path).isNotEmpty;
+  }
+
+  /// return true if current directory is the root. false, if the current directory not on root of the storage.
+  Future<void> openDefaultMountLocation() async {
+    final storages = await controller.getMountsLocations();
+    mountLocation = storages[0];
   }
 
   void manualRebuild() {

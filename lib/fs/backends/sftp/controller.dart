@@ -60,9 +60,8 @@ class SftpFsController extends FsController<SftpFsEntity, SftpFsFile, SftpFsDire
   @override
   Future<List<SftpFsDirectory>> getMountsLocations() async {
     final sftpNames = await _sftpClient.listdir('/');
-    return sftpNames
-        .where((sftpName) => sftpName.filename == '.')
-        .map((sftpName) => SftpFsDirectory(sftpName, null))
-        .toList();
+    SftpName root = sftpNames.where((sftpName) => sftpName.filename == '.').first;
+    SftpName wrappedRoot = SftpName(filename: '/', longname: '/', attr: root.attr);
+    return [SftpFsDirectory.createRoot(wrappedRoot)];
   }
 }

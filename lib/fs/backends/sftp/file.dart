@@ -5,5 +5,5 @@ import 'directory.dart';
 import 'entity.dart';
 
 class SftpFsFile extends SftpFsEntity with FsFile {
-  SftpFsFile(SftpName sftpName, SftpFsDirectory? parent) : super(sftpName, parent);
+  SftpFsFile(SftpName sftpName, SftpFsDirectory parent) : super(sftpName, parent);
 }
