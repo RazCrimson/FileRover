@@ -1,7 +1,8 @@
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 
-import '../../contracts/controller.dart';
+import 'package:file_rover/fs/contracts/controller.dart';
+
 import 'entity.dart';
 import 'directory.dart';
 import 'file.dart';

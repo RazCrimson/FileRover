@@ -1,9 +1,12 @@
 import 'dart:io';
 
-import 'package:file_rover/fs/backends/local/file.dart';
-import 'package:file_rover/fs/contracts/entity.dart';
 import 'package:path/path.dart' as pth;
+import 'package:meta/meta.dart';
+
+import 'package:file_rover/fs/contracts/entity.dart';
+
 import 'directory.dart';
+import 'file.dart';
 
 abstract class LocalFsEntity extends FsEntity {
   final FileSystemEntity _entity;
@@ -31,6 +34,9 @@ abstract class LocalFsEntity extends FsEntity {
 
   @override
   LocalFsDirectory get parent => LocalFsDirectory(_entity.parent);
+
+  @protected
+  FileSystemEntity get entity => _entity;
 
   Future<LocalFsEntity> rename(String name) async {
     final renamedEntity = await _entity.rename(pth.join(dirname, name));

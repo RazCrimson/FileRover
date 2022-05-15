@@ -1,5 +1,7 @@
 import 'package:dartssh2/dartssh2.dart';
+
 import 'package:file_rover/fs/contracts/directory.dart';
+
 import 'entity.dart';
 
 class SftpFsDirectory extends SftpFsEntity with FsDirectory {

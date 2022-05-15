@@ -1,8 +1,10 @@
 import 'dart:io';
 
-import 'package:file_rover/fs/contracts/directory.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:path/path.dart' as p;
+
+import 'package:file_rover/fs/contracts/directory.dart';
+
 import 'entity.dart';
 import 'file.dart';
 
@@ -20,7 +22,8 @@ class LocalFsDirectory extends LocalFsEntity with FsDirectory {
       status = await Permission.storage.request();
     }
 
-    return await Directory(path).list().map((FileSystemEntity entity) {
+    final dir = entity as Directory;
+    return await dir.list().map((FileSystemEntity entity) {
       if (entity is Directory) return LocalFsDirectory(entity);
       return LocalFsFile(entity);
     }).toList();

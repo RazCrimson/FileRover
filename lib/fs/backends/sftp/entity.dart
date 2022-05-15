@@ -1,6 +1,7 @@
 import 'package:dartssh2/dartssh2.dart';
-import 'package:file_rover/fs/contracts/entity.dart';
 import 'package:meta/meta.dart';
+
+import 'package:file_rover/fs/contracts/entity.dart';
 
 import 'directory.dart';
 
