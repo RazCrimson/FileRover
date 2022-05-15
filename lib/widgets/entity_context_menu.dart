@@ -69,9 +69,11 @@ class _EntityContextMenu extends State<EntityContextMenu> {
                   alignment: Alignment.centerLeft,
                   child: Text("Modified: ${entity.modifiedTime}", textAlign: TextAlign.left)),
               spacingBox,
-              TextButton(onPressed: () => handleRename(context), child: const Text('Rename')),
-              spacingBox,
-              TextButton(onPressed: () => handleDelete(context), child: const Text('Delete'))
+              Row(children: [
+                ElevatedButton(onPressed: () => handleRename(context), child: const Text('Rename')),
+                const Spacer(),
+                ElevatedButton(onPressed: () => handleDelete(context), child: const Text('Delete'))
+              ]),
             ])));
   }
 }

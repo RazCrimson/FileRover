@@ -1,24 +1,28 @@
 import 'package:flutter/material.dart';
 
+import '../fs/backends/local/controller.dart';
 import '../fs/contracts/controller.dart';
 
 class SessionProvider with ChangeNotifier {
-  final List<FsController> _fsControllers;
+  final LocalFsController _localFsController;
+  final List<FsController> _fsControllers = [];
 
-  SessionProvider(this._fsControllers);
+  SessionProvider(this._localFsController);
 
-  List<FsController> get controllers => _fsControllers;
+  LocalFsController get localController => _localFsController;
+
+  List<FsController> get controllers => List<FsController>.from(_fsControllers)..insert(0, _localFsController);
 
   bool addController(FsController controller) {
     if (controllers.contains(controller)) return false;
-    controllers.add(controller);
+    _fsControllers.add(controller);
     notifyListeners();
     return true;
   }
 
   bool removeController(FsController controller) {
     if (!controllers.contains(controller)) return false;
-    controllers.remove(controller);
+    _fsControllers.remove(controller);
     notifyListeners();
     return true;
   }

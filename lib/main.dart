@@ -7,11 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
-  final fsController = LocalFsController();
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => SessionProvider([fsController])),
+        ChangeNotifierProvider(create: (_) => SessionProvider(LocalFsController())),
         ChangeNotifierProvider(create: (_) => BrowserProvider()),
       ],
       child: const MyApp(),

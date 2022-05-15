@@ -1,6 +1,7 @@
 import 'package:file_icon/file_icon.dart';
 import 'package:file_rover/fs/contracts/directory.dart';
 import 'package:file_rover/fs/contracts/entity.dart';
+import 'package:file_rover/fs/contracts/file.dart';
 import 'package:file_rover/widgets/browser_back_handler.dart';
 import 'package:file_rover/widgets/rename_entry.dart';
 import 'package:flutter/cupertino.dart';
@@ -12,6 +13,7 @@ import 'package:timeago/timeago.dart' as timeago;
 import 'package:intl/intl.dart';
 
 import '../providers/browser.dart';
+import '../utils/file_transfer.dart';
 import '../widgets/create_directory.dart';
 import '../widgets/entity_context_menu.dart';
 import '../widgets/file_list.dart';
@@ -83,6 +85,7 @@ class FileBrowser extends StatelessWidget {
                                     Navigator.pop(context);
                                     showDialog(
                                         context: context, builder: (context) => RenameEntryWidget(entity: entity));
+                                    selectedEntities.clear();
                                   },
                                   leading: const Icon(CupertinoIcons.pen))));
 
@@ -94,7 +97,23 @@ class FileBrowser extends StatelessWidget {
                                     showDialog(
                                         context: context, builder: (context) => EntityContextMenu(entity: entity));
                                   },
-                                  leading: const Icon(Icons.notes))));
+                                  leading: const Icon(Icons.notes, size: 48))));
+
+                          if (!(browserProvider.controller.isLocal() || entity.isDirectory())) {
+                            menuOptions.add(PopupMenuItem(
+                                child: ListTile(
+                                    title: const Text("Download"),
+                                    onTap: () async {
+                                      Navigator.pop(context);
+                                      await downloadFile(context, entity as FsFile);
+                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                          content: Text("Downloaded ${entity.basename}"),
+                                          backgroundColor: Colors.green));
+                                      selectedEntities.clear();
+                                      browserProvider.manualRebuild();
+                                    },
+                                    leading: const Icon(Icons.download, size: 48))));
+                          }
                         }
                         menuOptions.add(PopupMenuItem(
                             child: ListTile(
