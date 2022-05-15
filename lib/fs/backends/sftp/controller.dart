@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:dartssh2/dartssh2.dart';
 
 import 'package:file_rover/fs/contracts/controller.dart';
@@ -17,6 +19,9 @@ class SftpFsController extends FsController<SftpFsEntity, SftpFsFile, SftpFsDire
   String getIdentity() {
     return '${_sshClient.username}@${_sshClient.socket}';
   }
+
+  @override
+  bool isLocal() => false;
 
   Future<SftpName> getMatchingSftpName(SftpFsDirectory directory, String name) async {
     final sftpNames = await _sftpClient.listdir(directory.path);
@@ -64,5 +69,18 @@ class SftpFsController extends FsController<SftpFsEntity, SftpFsFile, SftpFsDire
     SftpName root = sftpNames.where((sftpName) => sftpName.filename == '.').first;
     SftpName wrappedRoot = SftpName(filename: '/', longname: '/', attr: root.attr);
     return [SftpFsDirectory.createRoot(wrappedRoot)];
+  }
+
+  @override
+  Future<Uint8List> readFile(SftpFsFile file) async {
+    final sftpFile = await _sftpClient.open(file.path);
+    return sftpFile.readBytes();
+  }
+
+  @override
+  Future<void> writeFile(SftpFsDirectory dir, String filePath, Uint8List bytes) async {
+    final sftpFile = await _sftpClient.open('${dir.path}/$filePath',
+        mode: SftpFileOpenMode.write | SftpFileOpenMode.create | SftpFileOpenMode.truncate);
+    await sftpFile.writeBytes(bytes);
   }
 }

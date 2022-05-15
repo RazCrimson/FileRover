@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:equatable/equatable.dart';
 
 import '../sorters/enums.dart';
@@ -8,7 +10,11 @@ import 'file.dart';
 
 abstract class FsController<Entity extends FsEntity, File extends FsFile, Directory extends FsDirectory>
     extends Equatable {
+  // Identify each unique controllers
   String getIdentity();
+
+  // return true if the controller manages a local fs
+  bool isLocal();
 
   // Implement props for equality checks
   @override
@@ -42,4 +48,8 @@ abstract class FsController<Entity extends FsEntity, File extends FsFile, Direct
     final entities = await getEntities(directory);
     return FsEntitySorterFactory.getSorter(sortType).sort(entities, ordering);
   }
+
+  Future<Uint8List> readFile(File file);
+
+  Future<void> writeFile(Directory dir, String filePath, Uint8List bytes);
 }

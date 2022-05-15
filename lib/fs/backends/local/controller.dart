@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:path_provider/path_provider.dart';
 
 import 'package:file_rover/fs/contracts/controller.dart';
@@ -12,6 +13,9 @@ class LocalFsController extends FsController<LocalFsEntity, LocalFsFile, LocalFs
   String getIdentity() {
     return 'Local Storage';
   }
+
+  @override
+  bool isLocal() => true;
 
   @override
   Future<List<LocalFsDirectory>> getMountsLocations() async {
@@ -49,5 +53,17 @@ class LocalFsController extends FsController<LocalFsEntity, LocalFsFile, LocalFs
   Future<void> delete(LocalFsEntity entity) {
     // Chaining calls as LocalFs actions don't rely on a connection
     return entity.delete();
+  }
+
+  @override
+  Future<Uint8List> readFile(LocalFsFile file) async {
+    // Chaining calls as LocalFs actions don't rely on a connection
+    return file.read();
+  }
+
+  @override
+  Future<void> writeFile(LocalFsDirectory dir, String filePath, Uint8List bytes) async {
+    final file = await File('${dir.path}/$filePath').create(recursive: true);
+    await file.writeAsBytes(bytes);
   }
 }
