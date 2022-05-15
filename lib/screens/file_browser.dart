@@ -58,7 +58,12 @@ class FileBrowser extends StatelessWidget {
                     itemBuilder: (BuildContext context) {
                       final List<PopupMenuEntry> menuOptions = [
                         PopupMenuItem(
+                            padding: const EdgeInsets.symmetric(horizontal: 5),
                             child: ListTile(
+                                minLeadingWidth: 24,
+                                horizontalTitleGap: 8,
+                                minVerticalPadding: 0,
+                                dense: true,
                                 title: const Text("New Folder"),
                                 onTap: () {
                                   Navigator.pop(context);
@@ -66,7 +71,12 @@ class FileBrowser extends StatelessWidget {
                                 },
                                 leading: const Icon(Icons.create_new_folder_outlined))),
                         PopupMenuItem(
+                            padding: const EdgeInsets.symmetric(horizontal: 5),
                             child: ListTile(
+                                minLeadingWidth: 24,
+                                horizontalTitleGap: 8,
+                                minVerticalPadding: 0,
+                                dense: true,
                                 title: const Text("Select Mount"),
                                 onTap: () {
                                   Navigator.pop(context);
@@ -79,7 +89,12 @@ class FileBrowser extends StatelessWidget {
                         if (selectedEntities.length == 1) {
                           final entity = selectedEntities[0];
                           menuOptions.add(PopupMenuItem(
+                              padding: const EdgeInsets.symmetric(horizontal: 5),
                               child: ListTile(
+                                  minLeadingWidth: 24,
+                                  horizontalTitleGap: 8,
+                                  minVerticalPadding: 0,
+                                  dense: true,
                                   title: const Text("Rename"),
                                   onTap: () {
                                     Navigator.pop(context);
@@ -90,18 +105,28 @@ class FileBrowser extends StatelessWidget {
                                   leading: const Icon(CupertinoIcons.pen))));
 
                           menuOptions.add(PopupMenuItem(
+                              padding: const EdgeInsets.symmetric(horizontal: 5),
                               child: ListTile(
+                                  minLeadingWidth: 24,
+                                  horizontalTitleGap: 8,
+                                  minVerticalPadding: 0,
+                                  dense: true,
                                   title: const Text("Details"),
                                   onTap: () {
                                     Navigator.pop(context);
                                     showDialog(
                                         context: context, builder: (context) => EntityContextMenu(entity: entity));
                                   },
-                                  leading: const Icon(Icons.notes, size: 48))));
+                                  leading: const Icon(Icons.notes))));
 
                           if (!(browserProvider.controller.isLocal() || entity.isDirectory())) {
                             menuOptions.add(PopupMenuItem(
+                                padding: const EdgeInsets.symmetric(horizontal: 5),
                                 child: ListTile(
+                                    minLeadingWidth: 24,
+                                    horizontalTitleGap: 8,
+                                    minVerticalPadding: 0,
+                                    dense: true,
                                     title: const Text("Download"),
                                     onTap: () async {
                                       Navigator.pop(context);
@@ -112,12 +137,17 @@ class FileBrowser extends StatelessWidget {
                                       selectedEntities.clear();
                                       browserProvider.manualRebuild();
                                     },
-                                    leading: const Icon(Icons.download, size: 48))));
+                                    leading: const Icon(Icons.download))));
                           }
                         }
                         menuOptions.add(PopupMenuItem(
+                            padding: const EdgeInsets.symmetric(horizontal: 5),
                             child: ListTile(
-                                title: const Text("Delete Items"),
+                                minLeadingWidth: 24,
+                                horizontalTitleGap: 8,
+                                minVerticalPadding: 0,
+                                dense: true,
+                                title: Text("Delete Item${selectedEntities.length == 1 ? '' : 's'}"),
                                 onTap: () async {
                                   Navigator.pop(context);
                                   HapticFeedback.vibrate();
