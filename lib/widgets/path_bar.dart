@@ -1,6 +1,7 @@
 import 'package:file_rover/fs/contracts/directory.dart';
 import 'package:file_rover/widgets/select_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/browser.dart';
@@ -24,11 +25,21 @@ class PathBar extends StatelessWidget implements PreferredSizeWidget {
       pathNodes.insert(0, dir);
     }
 
+    final ScrollController scrollController = ScrollController();
+    SchedulerBinding.instance?.addPostFrameCallback((_) {
+      scrollController.animateTo(
+        scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeOut,
+      );
+    });
+
     return SizedBox(
       height: 50,
       child: Align(
           alignment: Alignment.centerLeft,
           child: ListView.separated(
+            controller: scrollController,
             padding: const EdgeInsets.symmetric(horizontal: 8),
             scrollDirection: Axis.horizontal,
             shrinkWrap: true,
