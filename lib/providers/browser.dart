@@ -8,6 +8,7 @@ import '../fs/sorters/enums.dart';
 class BrowserProvider with ChangeNotifier {
   late FsController controller;
   late FsDirectory _currentDir, _currentMount;
+  final List<FsEntity> _selectedEntities = [];
 
   SortBy _sortBy = SortBy.name;
   SortOrder _sortOrder = SortOrder.ascending;
@@ -44,7 +45,10 @@ class BrowserProvider with ChangeNotifier {
     print("Invalid Directory at provider");
   }
 
-  void openDirectory(FsDirectory dir) => directory = dir;
+  void openDirectory(FsDirectory dir) {
+    selectedEntities.clear();
+    directory = dir;
+  }
 
   Future<List<FsEntity>> getSortedEntitiesInCurrentDir() async {
     return controller.getSortedEntities(directory, sortBy, sortOrder);
@@ -73,6 +77,27 @@ class BrowserProvider with ChangeNotifier {
   Future<void> openDefaultMountLocation() async {
     final storages = await controller.getMountsLocations();
     mountLocation = storages[0];
+  }
+
+  List<FsEntity> get selectedEntities => _selectedEntities;
+
+  void addSelected(FsEntity e) {
+    selectedEntities.add(e);
+    notifyListeners();
+  }
+
+  bool selectedContains(FsEntity e) {
+    return selectedEntities.contains(e);
+  }
+
+  void removeSelected(FsEntity e) {
+    selectedEntities.remove(e);
+    notifyListeners();
+  }
+
+  void clearSelected() {
+    selectedEntities.clear();
+    notifyListeners();
   }
 
   void manualRebuild() {

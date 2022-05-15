@@ -2,7 +2,10 @@ import 'package:file_icon/file_icon.dart';
 import 'package:file_rover/fs/contracts/directory.dart';
 import 'package:file_rover/fs/contracts/entity.dart';
 import 'package:file_rover/widgets/browser_back_handler.dart';
+import 'package:file_rover/widgets/rename_entry.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:open_file/open_file.dart';
 import 'package:provider/provider.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -35,24 +38,89 @@ class FileBrowser extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final browserProvider = Provider.of<BrowserProvider>(context, listen: false);
+    final browserProvider = Provider.of<BrowserProvider>(context);
+    final selectedEntities = browserProvider.selectedEntities;
 
     return BrowserBackHandler(
         child: Scaffold(
             appBar: AppBar(
+              leading: selectedEntities.isNotEmpty
+                  ? IconButton(onPressed: () => browserProvider.clearSelected(), icon: const Icon(Icons.clear))
+                  : null,
               actions: [
-                IconButton(
-                    onPressed: () => showDialog(context: context, builder: (context) => const CreateDirectoryWidget()),
-                    icon: const Icon(Icons.create_new_folder_outlined)),
                 IconButton(
                     onPressed: () => showDialog(context: context, builder: (context) => const SortWidget()),
                     icon: const Icon(Icons.sort_rounded)),
-                IconButton(
-                    onPressed: () => showDialog(context: context, builder: (context) => const SelectStorageWidget()),
-                    icon: const Icon(Icons.sd_storage_rounded))
+                PopupMenuButton(
+                    icon: const Icon(Icons.more_vert),
+                    itemBuilder: (BuildContext context) {
+                      final List<PopupMenuEntry> menuOptions = [
+                        PopupMenuItem(
+                            child: ListTile(
+                                title: const Text("New Folder"),
+                                onTap: () {
+                                  Navigator.pop(context);
+                                  showDialog(context: context, builder: (context) => const CreateDirectoryWidget());
+                                },
+                                leading: const Icon(Icons.create_new_folder_outlined))),
+                        PopupMenuItem(
+                            child: ListTile(
+                                title: const Text("Select Mount"),
+                                onTap: () {
+                                  Navigator.pop(context);
+                                  showDialog(context: context, builder: (context) => const SelectStorageWidget());
+                                },
+                                leading: const Icon(Icons.sd_storage_sharp))),
+                      ];
+
+                      if (selectedEntities.isNotEmpty) {
+                        if (selectedEntities.length == 1) {
+                          final entity = selectedEntities[0];
+                          menuOptions.add(PopupMenuItem(
+                              child: ListTile(
+                                  title: const Text("Rename"),
+                                  onTap: () {
+                                    Navigator.pop(context);
+                                    showDialog(
+                                        context: context, builder: (context) => RenameEntryWidget(entity: entity));
+                                  },
+                                  leading: const Icon(CupertinoIcons.pen))));
+
+                          menuOptions.add(PopupMenuItem(
+                              child: ListTile(
+                                  title: const Text("Details"),
+                                  onTap: () {
+                                    Navigator.pop(context);
+                                    showDialog(
+                                        context: context, builder: (context) => EntityContextMenu(entity: entity));
+                                  },
+                                  leading: const Icon(Icons.notes))));
+                        }
+                        menuOptions.add(PopupMenuItem(
+                            child: ListTile(
+                                title: const Text("Delete Items"),
+                                onTap: () async {
+                                  Navigator.pop(context);
+                                  HapticFeedback.vibrate();
+                                  for (final entity in selectedEntities) {
+                                    try {
+                                      await browserProvider.controller.delete(entity);
+                                    } catch (e) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(content: Text(e.toString()), backgroundColor: Colors.red));
+                                    }
+                                  }
+                                  selectedEntities.clear();
+                                  browserProvider.manualRebuild();
+                                },
+                                leading: const Icon(Icons.delete))));
+                      }
+
+                      return menuOptions;
+                    })
               ],
-              title: const Text("File Rover"),
-              bottom: const PathBar(),
+              title: selectedEntities.isEmpty ? const Text("File Rover") : Text('${selectedEntities.length} selected'),
+              bottom: PathBar(),
             ),
             body: AnimatedContainer(
               margin: const EdgeInsets.all(10),
@@ -64,31 +132,36 @@ class FileBrowser extends StatelessWidget {
                     itemCount: entities.length,
                     itemBuilder: (context, index) {
                       FsEntity entity = entities[index];
-                      return Card(
-                        child: ListTile(
-                          minLeadingWidth: 8,
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 10),
-                          horizontalTitleGap: 8,
-                          minVerticalPadding: 1,
-                          dense: true,
-                          enableFeedback: true,
-                          leading: entity.isDirectory()
-                              ? const Icon(Icons.folder, size: 48)
-                              : FileIcon(entity.basename, size: 48),
-                          title: Text(entity.basename, overflow: TextOverflow.ellipsis),
-                          subtitle: Text(getSubTitle(entity)),
-                          onTap: () async {
-                            if (entity.isDirectory()) {
-                              // Open the Directory
-                              browserProvider.openDirectory(entity as FsDirectory);
-                            } else {
-                              // Open the File
-                              OpenFile.open(entity.path);
-                            }
-                          },
-                          onLongPress: () =>
-                              showDialog(context: context, builder: (context) => EntityContextMenu(entity: entity)),
-                        ),
+                      return ListTile(
+                        minLeadingWidth: 8,
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+                        horizontalTitleGap: 8,
+                        minVerticalPadding: 1,
+                        dense: true,
+                        enableFeedback: true,
+                        selected: browserProvider.selectedContains(entity),
+                        leading: entity.isDirectory()
+                            ? const Icon(Icons.folder, size: 48)
+                            : FileIcon(entity.basename, size: 48),
+                        title: Text(entity.basename, overflow: TextOverflow.ellipsis),
+                        subtitle: Text(getSubTitle(entity)),
+                        trailing: selectedEntities.isNotEmpty
+                            ? browserProvider.selectedContains(entity)
+                                ? const Icon(Icons.check_box)
+                                : const Icon(Icons.check_box_outline_blank)
+                            : null,
+                        onTap: () {
+                          if (selectedEntities.isNotEmpty) {
+                            browserProvider.selectedContains(entity)
+                                ? browserProvider.removeSelected(entity)
+                                : browserProvider.addSelected(entity);
+                          } else {
+                            entity.isDirectory()
+                                ? browserProvider.openDirectory(entity as FsDirectory)
+                                : OpenFile.open(entity.path);
+                          }
+                        },
+                        onLongPress: () => browserProvider.addSelected(entity),
                       );
                     },
                   );
