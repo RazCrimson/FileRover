@@ -18,7 +18,7 @@ abstract class SftpFsEntity extends FsEntity {
   int get size => _attrs.size ?? 0;
 
   @override
-  String get path => '${_parent == this ? "" : "${_parent.path}/"}$basename';
+  String get path => '${identical(this, parent) ? "": "$dirname/"}$basename';
 
   @override
   String get basename => _sftpName.filename;

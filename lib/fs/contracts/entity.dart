@@ -1,9 +1,15 @@
 import 'dart:math' as math;
 
+import 'package:equatable/equatable.dart';
+
 import 'directory.dart';
 
-abstract class FsEntity {
+abstract class FsEntity extends Equatable {
   static const sizeSuffixes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
+
+  // Implement props for equality checks
+  @override
+  List<Object> get props => [path];
 
   int get size;
 
