@@ -1,3 +1,4 @@
+import 'package:file_rover/dao/credential.dart';
 import 'package:file_rover/fs/backends/local/controller.dart';
 import 'package:file_rover/providers/browser.dart';
 import 'package:file_rover/providers/session.dart';
@@ -10,7 +11,7 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => SessionProvider(LocalFsController())),
+        ChangeNotifierProvider(create: (_) => SessionProvider(CredentialDB(), LocalFsController())),
         ChangeNotifierProvider(create: (_) => BrowserProvider()),
       ],
       child: const MyApp(),

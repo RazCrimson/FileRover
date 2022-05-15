@@ -1,4 +1,3 @@
-import 'package:file_rover/fs/contracts/directory.dart';
 import 'package:file_rover/fs/contracts/entity.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -41,30 +40,6 @@ class _FileListState extends State<FileList> {
   Widget build(BuildContext context) {
     final browserProvider = Provider.of<BrowserProvider>(context);
 
-    return FutureBuilder<List<FsDirectory>>(
-      future: browserProvider.controller.getMountsLocations(),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          return _body(context);
-        } else if (snapshot.hasError) {
-          if (kDebugMode) print(snapshot.error);
-          browserProvider.isMountLocation().then((value) => browserProvider.goToParentDirectory());
-          WidgetsBinding.instance?.addPostFrameCallback((_) {
-            ScaffoldMessenger.of(context)
-              ..removeCurrentSnackBar()
-              ..showSnackBar(SnackBar(content: Text(snapshot.error.toString()), backgroundColor: Colors.red));
-          });
-          return _errorPage(snapshot.error.toString());
-        } else {
-          return _loadingScreenWidget();
-        }
-      },
-    );
-  }
-
-  Widget _body(BuildContext context) {
-    final browserProvider = Provider.of<BrowserProvider>(context);
-
     return FutureBuilder<List<FsEntity>>(
         future: browserProvider.getSortedEntitiesInCurrentDir(),
         builder: (context, snapshot) {
@@ -82,7 +57,7 @@ class _FileListState extends State<FileList> {
             if (kDebugMode) {
               print(snapshot.error);
             }
-            browserProvider.isMountLocation().then((value) => browserProvider.goToParentDirectory());
+            browserProvider.goToParentDirectory();
             WidgetsBinding.instance?.addPostFrameCallback((_) {
               ScaffoldMessenger.of(context)
                 ..removeCurrentSnackBar()

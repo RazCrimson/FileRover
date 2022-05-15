@@ -24,12 +24,11 @@ class _BrowserBackHandler extends State<BrowserBackHandler> {
     final browserProvider = Provider.of<BrowserProvider>(context, listen: false);
 
     if (await browserProvider.isMountLocation()) {
-      if (DateTime.now().difference(lastInvocationAtRoot).inSeconds < 3) return true;
-      lastInvocationAtRoot = DateTime.now();
+      return true;
     } else {
       browserProvider.goToParentDirectory();
+      return false;
     }
-    return false;
   }
 
   @override

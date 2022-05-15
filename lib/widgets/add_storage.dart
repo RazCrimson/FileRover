@@ -1,20 +1,18 @@
-import 'package:dartssh2/dartssh2.dart';
+import 'package:file_rover/models/credential.dart';
 import 'package:file_rover/providers/session.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-import '../fs/backends/sftp/controller.dart';
-
-class AddStorageWidget extends StatefulWidget {
-  const AddStorageWidget({Key? key}) : super(key: key);
+class AddConnectionWidget extends StatefulWidget {
+  const AddConnectionWidget({Key? key}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _AddStorageWidget();
+  State<StatefulWidget> createState() => _AddConnectionWidget();
 }
 
-class _AddStorageWidget extends State<AddStorageWidget> {
+class _AddConnectionWidget extends State<AddConnectionWidget> {
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -65,26 +63,14 @@ class _AddStorageWidget extends State<AddStorageWidget> {
                 ElevatedButton(
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
-                      final username = usernameFieldController.text;
-                      final password = passwordFieldController.text;
-                      final host = hostFieldController.text;
-                      final port = int.parse(portFieldController.text);
-
-                      try {
-                        final socket = await SSHSocket.connect(host, port);
-                        final client = SSHClient(
-                          socket,
-                          username: username,
-                          onPasswordRequest: () => password,
-                        );
-
-                        final sftp = await client.sftp();
-                        final fsController = SftpFsController(client, sftp);
-                        sessionProvider.addController(fsController);
-                        Navigator.pop(context);
-                      } catch (e) {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
-                      }
+                      final credential = Credential(
+                        username: usernameFieldController.text,
+                        password: passwordFieldController.text,
+                        host: hostFieldController.text,
+                        port: int.parse(portFieldController.text),
+                      );
+                      await sessionProvider.addCredential(credential);
+                      Navigator.pop(context);
                     }
                   },
                   child: const Text('Submit'),

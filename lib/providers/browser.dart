@@ -39,9 +39,7 @@ class BrowserProvider with ChangeNotifier {
     if (dir.path.startsWith(_currentMount.path)) {
       _currentDir = dir;
       notifyListeners();
-      return;
     }
-
     print("Invalid Directory at provider");
   }
 

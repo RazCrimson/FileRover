@@ -1,29 +1,47 @@
+import 'package:file_rover/dao/credential.dart';
 import 'package:flutter/material.dart';
 
 import '../fs/backends/local/controller.dart';
-import '../fs/contracts/controller.dart';
+import '../models/connection.dart';
+import '../models/credential.dart';
 
 class SessionProvider with ChangeNotifier {
+  bool initialized = false;
+  final CredentialDB credDb;
   final LocalFsController _localFsController;
-  final List<FsController> _fsControllers = [];
+  late List<SftpConnection> _connections = [];
 
-  SessionProvider(this._localFsController);
+  SessionProvider(this.credDb, this._localFsController) {
+    init().then((_) => notifyListeners());
+  }
+
+  Future<void> init() async {
+    if (!initialized) {
+      await credDb.initDatabase();
+      final credentials = await credDb.fetchAll();
+      _connections = credentials.map((cred) => SftpConnection(cred)).toList();
+      initialized = true;
+    }
+  }
 
   LocalFsController get localController => _localFsController;
 
-  List<FsController> get controllers => List<FsController>.from(_fsControllers)..insert(0, _localFsController);
+  List<SftpConnection> get connections => _connections;
 
-  bool addController(FsController controller) {
-    if (controllers.contains(controller)) return false;
-    _fsControllers.add(controller);
+  Future<void> addCredential(Credential credential) async {
+    credDb.insert(credential);
+    _connections.add(SftpConnection(credential));
+    notifyListeners();
+  }
+
+  bool removeConnection(SftpConnection connection) {
+    _connections.removeWhere((e) => e == connection);
+    credDb.deleteNode(connection.credential.id!);
     notifyListeners();
     return true;
   }
 
-  bool removeController(FsController controller) {
-    if (!controllers.contains(controller)) return false;
-    _fsControllers.remove(controller);
+  void manualRebuild() {
     notifyListeners();
-    return true;
   }
 }

@@ -169,7 +169,7 @@ class FileBrowser extends StatelessWidget {
                     })
               ],
               title: selectedEntities.isEmpty ? const Text("File Rover") : Text('${selectedEntities.length} selected'),
-              bottom: PathBar(),
+              bottom: const PathBar(),
             ),
             body: AnimatedContainer(
               margin: const EdgeInsets.all(10),
