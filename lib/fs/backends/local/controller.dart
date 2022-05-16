@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:file_rover/fs/backends/local/utils.dart';
+import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'package:file_rover/fs/contracts/controller.dart';
@@ -65,5 +67,22 @@ class LocalFsController extends FsController<LocalFsEntity, LocalFsFile, LocalFs
   Future<void> writeFile(LocalFsDirectory dir, String filename, Uint8List bytes) async {
     final file = await File('${dir.path}/$filename').create(recursive: true);
     await file.writeAsBytes(bytes);
+  }
+
+  Future<void> copy(LocalFsEntity entity, LocalFsDirectory dest) async {
+    if (entity is LocalFsFile) {
+      await entity.copy('${dest.path}/${entity.basename}');
+    } else {
+      await compute(copyPathWrapper, {"from": entity.path, "to": '${dest.path}/${entity.basename}'});
+    }
+  }
+
+  Future<void> move(LocalFsEntity entity, LocalFsDirectory dest) async {
+    if (entity is LocalFsFile) {
+      await entity.move(dest);
+    } else {
+      await compute(copyPathWrapper, {"from": entity.path, "to": '${dest.path}/${entity.basename}'});
+      entity.delete(recursive: true);
+    }
   }
 }
