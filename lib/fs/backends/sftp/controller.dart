@@ -78,8 +78,8 @@ class SftpFsController extends FsController<SftpFsEntity, SftpFsFile, SftpFsDire
   }
 
   @override
-  Future<void> writeFile(SftpFsDirectory dir, String filePath, Uint8List bytes) async {
-    final sftpFile = await _sftpClient.open('${dir.path}/$filePath',
+  Future<void> writeFile(SftpFsDirectory dir, String filename, Uint8List bytes) async {
+    final sftpFile = await _sftpClient.open('${dir.path}/$filename',
         mode: SftpFileOpenMode.write | SftpFileOpenMode.create | SftpFileOpenMode.truncate);
     await sftpFile.writeBytes(bytes);
   }

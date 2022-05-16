@@ -62,8 +62,8 @@ class LocalFsController extends FsController<LocalFsEntity, LocalFsFile, LocalFs
   }
 
   @override
-  Future<void> writeFile(LocalFsDirectory dir, String filePath, Uint8List bytes) async {
-    final file = await File('${dir.path}/$filePath').create(recursive: true);
+  Future<void> writeFile(LocalFsDirectory dir, String filename, Uint8List bytes) async {
+    final file = await File('${dir.path}/$filename').create(recursive: true);
     await file.writeAsBytes(bytes);
   }
 }

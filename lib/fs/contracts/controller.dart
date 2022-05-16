@@ -51,5 +51,5 @@ abstract class FsController<Entity extends FsEntity, File extends FsFile, Direct
 
   Future<Uint8List> readFile(File file);
 
-  Future<void> writeFile(Directory dir, String filePath, Uint8List bytes);
+  Future<void> writeFile(Directory dir, String filename, Uint8List bytes);
 }
