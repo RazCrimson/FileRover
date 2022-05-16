@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:open_file/open_file.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:intl/intl.dart';
 
@@ -163,6 +164,26 @@ class FileBrowser extends StatelessWidget {
                                   browserProvider.manualRebuild();
                                 },
                                 leading: const Icon(Icons.delete))));
+
+                        if (selectedEntities.where((e) => e.isDirectory()).isEmpty &&
+                            browserProvider.controller.isLocal()) {
+                          menuOptions.add(PopupMenuItem(
+                              padding: const EdgeInsets.symmetric(horizontal: 5),
+                              child: ListTile(
+                                  minLeadingWidth: 24,
+                                  horizontalTitleGap: 8,
+                                  minVerticalPadding: 0,
+                                  dense: true,
+                                  title: const Text("Share"),
+                                  onTap: () async {
+                                    Navigator.pop(context);
+                                    final paths = selectedEntities.map((e) => e.path).toList();
+                                    Share.shareFiles(paths);
+                                    selectedEntities.clear();
+                                    browserProvider.manualRebuild();
+                                  },
+                                  leading: const Icon(Icons.share))));
+                        }
                       }
 
                       return menuOptions;
