@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:file_icon/file_icon.dart';
 import 'package:file_rover/fs/contracts/directory.dart';
 import 'package:file_rover/fs/contracts/entity.dart';
@@ -7,6 +9,7 @@ import 'package:file_rover/widgets/rename_entry.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mime/mime.dart';
 import 'package:open_file/open_file.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -37,6 +40,25 @@ class FileBrowser extends StatelessWidget {
 
     subTitle += 'Modified: ${getTimeValue(entity.modifiedTime)}';
     return subTitle;
+  }
+
+  Widget getIcon(BuildContext context, FsEntity entity) {
+    final browserProvider = Provider.of<BrowserProvider>(context);
+
+    if (entity.isDirectory()) return const Icon(Icons.folder, size: 48);
+
+    if (browserProvider.controller.isLocal() && (lookupMimeType(entity.path)?.startsWith("image") ?? false)) {
+      return Image(
+          fit: BoxFit.cover,
+          errorBuilder: (b, o, c) => FileIcon(entity.basename, size: 48),
+          image: ResizeImage(
+            FileImage(File(entity.path)),
+            width: 40,
+            height: 50,
+          ));
+    } else {
+      return FileIcon(entity.basename, size: 48);
+    }
   }
 
   @override
@@ -210,9 +232,7 @@ class FileBrowser extends StatelessWidget {
                         dense: true,
                         enableFeedback: true,
                         selected: browserProvider.selectedContains(entity),
-                        leading: entity.isDirectory()
-                            ? const Icon(Icons.folder, size: 48)
-                            : FileIcon(entity.basename, size: 48),
+                        leading: getIcon(context, entity),
                         title: Text(entity.basename, overflow: TextOverflow.ellipsis),
                         subtitle: Text(getSubTitle(entity)),
                         trailing: selectedEntities.isNotEmpty
