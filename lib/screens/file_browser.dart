@@ -259,50 +259,53 @@ class FileBrowser extends StatelessWidget {
             body: AnimatedContainer(
               margin: const EdgeInsets.all(10),
               duration: const Duration(milliseconds: 1000),
-              child: FileList(
-                hideHiddenEntity: !settingsProvider.showHiddenFiles,
-                builder: (context, snapshot) {
-                  final List<FsEntity> entities = snapshot;
-                  return ListView.builder(
-                    itemCount: entities.length,
-                    itemBuilder: (context, index) {
-                      FsEntity entity = entities[index];
-                      return ListTile(
-                          minLeadingWidth: 8,
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 10),
-                          horizontalTitleGap: 8,
-                          minVerticalPadding: 1,
-                          dense: true,
-                          enableFeedback: true,
-                          selected: browserProvider.selectedContains(entity),
-                          leading: getIcon(context, entity),
-                          title: Text(entity.basename, overflow: TextOverflow.ellipsis),
-                          subtitle: Text(getSubTitle(entity)),
-                          trailing: selectedEntities.isNotEmpty
-                              ? browserProvider.selectedContains(entity)
-                                  ? const Icon(Icons.check_box)
-                                  : const Icon(Icons.check_box_outline_blank)
-                              : null,
-                          onTap: () {
-                            if (selectionProvider.selectedEntities?.isEmpty ?? true && selectedEntities.isNotEmpty) {
-                              browserProvider.selectedContains(entity)
-                                  ? browserProvider.removeSelected(entity)
-                                  : browserProvider.addSelected(entity);
-                            } else {
-                              entity.isDirectory()
-                                  ? browserProvider.openDirectory(entity as FsDirectory)
-                                  : OpenFile.open(entity.path);
-                            }
-                          },
-                          onLongPress: () {
-                            selectionProvider.selectedEntities?.isEmpty ?? true
-                                ? browserProvider.addSelected(entity)
-                                : null;
-                          });
+              child: RefreshIndicator(
+                  onRefresh: () async => browserProvider.manualRebuild(),
+                  child: FileList(
+                    hideHiddenEntity: !settingsProvider.showHiddenFiles,
+                    builder: (context, snapshot) {
+                      final List<FsEntity> entities = snapshot;
+                      return ListView.builder(
+                        itemCount: entities.length,
+                        itemBuilder: (context, index) {
+                          FsEntity entity = entities[index];
+                          return ListTile(
+                              minLeadingWidth: 8,
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+                              horizontalTitleGap: 8,
+                              minVerticalPadding: 1,
+                              dense: true,
+                              enableFeedback: true,
+                              selected: browserProvider.selectedContains(entity),
+                              leading: getIcon(context, entity),
+                              title: Text(entity.basename, overflow: TextOverflow.ellipsis),
+                              subtitle: Text(getSubTitle(entity)),
+                              trailing: selectedEntities.isNotEmpty
+                                  ? browserProvider.selectedContains(entity)
+                                      ? const Icon(Icons.check_box)
+                                      : const Icon(Icons.check_box_outline_blank)
+                                  : null,
+                              onTap: () {
+                                if (selectionProvider.selectedEntities?.isEmpty ??
+                                    true && selectedEntities.isNotEmpty) {
+                                  browserProvider.selectedContains(entity)
+                                      ? browserProvider.removeSelected(entity)
+                                      : browserProvider.addSelected(entity);
+                                } else {
+                                  entity.isDirectory()
+                                      ? browserProvider.openDirectory(entity as FsDirectory)
+                                      : OpenFile.open(entity.path);
+                                }
+                              },
+                              onLongPress: () {
+                                selectionProvider.selectedEntities?.isEmpty ?? true
+                                    ? browserProvider.addSelected(entity)
+                                    : null;
+                              });
+                        },
+                      );
                     },
-                  );
-                },
-              ),
+                  )),
             )));
   }
 }
