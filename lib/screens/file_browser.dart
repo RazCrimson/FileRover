@@ -116,7 +116,7 @@ class FileBrowser extends StatelessWidget {
                 }));
               }
 
-              if (!(controller.isLocal() && selectedEntities.where((e) => e.isDirectory()).isEmpty)) {
+              if (!controller.isLocal() && selectedEntities.where((e) => e.isDirectory()).isEmpty) {
                 menuOptions.add(makePopupMenuItem("Download", Icons.download, () async {
                   Navigator.pop(context);
                   for (final entity in selectedEntities) {
