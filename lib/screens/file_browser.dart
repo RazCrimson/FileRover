@@ -8,6 +8,7 @@ import 'package:file_rover/fs/contracts/directory.dart';
 import 'package:file_rover/fs/contracts/entity.dart';
 import 'package:file_rover/fs/contracts/file.dart';
 import 'package:file_rover/providers/selection.dart';
+import 'package:file_rover/providers/settings.dart';
 import 'package:file_rover/widgets/browser_back_handler.dart';
 import 'package:file_rover/widgets/rename_entry.dart';
 import 'package:flutter/cupertino.dart';
@@ -237,7 +238,16 @@ class FileBrowser extends StatelessWidget {
                 }
               }
             }
-
+            menuOptions.add(PopupMenuItem(
+                padding: const EdgeInsets.symmetric(horizontal: 5),
+                child: ListTile(
+                    minLeadingWidth: 24,
+                    horizontalTitleGap: 8,
+                    minVerticalPadding: 0,
+                    dense: true,
+                    title: const Text("Settings"),
+                    onTap: () => Navigator.pushReplacementNamed(context, "/settings"),
+                    leading: const Icon(Icons.settings))));
             return menuOptions;
           })
     ];
@@ -304,6 +314,7 @@ class FileBrowser extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
     final selectionProvider = Provider.of<SelectionProvider>(context);
     final browserProvider = Provider.of<BrowserProvider>(context);
     final selectedEntities = browserProvider.selectedEntities;
@@ -322,6 +333,7 @@ class FileBrowser extends StatelessWidget {
               margin: const EdgeInsets.all(10),
               duration: const Duration(milliseconds: 1000),
               child: FileList(
+                hideHiddenEntity: !settingsProvider.showHiddenFiles,
                 builder: (context, snapshot) {
                   final List<FsEntity> entities = snapshot;
                   return ListView.builder(

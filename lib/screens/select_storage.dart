@@ -33,8 +33,7 @@ class SelectStorage extends StatelessWidget {
       onLongPress: () {
         showDialog(
             context: ctx,
-            builder: (_) =>
-                Dialog(
+            builder: (_) => Dialog(
                   child: SingleChildScrollView(
                     child: Column(mainAxisSize: MainAxisSize.min, children: [
                       ListTile(
@@ -84,6 +83,9 @@ class SelectStorage extends StatelessWidget {
             IconButton(
                 onPressed: () => showDialog(context: context, builder: (context) => const AddConnectionWidget()),
                 icon: const Icon(Icons.add)),
+            IconButton(
+                onPressed: () => Navigator.pushNamed(context, '/settings'),
+                icon: const Icon(Icons.settings)),
           ],
           title: const Text("File Rover"),
         ),
