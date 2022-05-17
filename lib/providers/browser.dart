@@ -10,8 +10,8 @@ class BrowserProvider with ChangeNotifier {
   late FsDirectory _currentDir, _currentMount;
   final List<FsEntity> _selectedEntities = [];
 
-  SortBy _sortBy = SortBy.name;
-  SortOrder _sortOrder = SortOrder.ascending;
+  SortBy _sortBy = SortBy.time;
+  SortOrder _sortOrder = SortOrder.descending;
 
   SortBy get sortBy => _sortBy;
 
@@ -40,7 +40,6 @@ class BrowserProvider with ChangeNotifier {
       _currentDir = dir;
       notifyListeners();
     }
-    print("Invalid Directory at provider");
   }
 
   void openDirectory(FsDirectory dir) {
