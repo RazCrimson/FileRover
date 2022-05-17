@@ -69,6 +69,7 @@ class LocalFsController extends FsController<LocalFsEntity, LocalFsFile, LocalFs
     await file.writeAsBytes(bytes);
   }
 
+  @override
   Future<void> copy(LocalFsEntity entity, LocalFsDirectory dest) async {
     if (entity is LocalFsFile) {
       await entity.copy('${dest.path}/${entity.basename}');
@@ -77,6 +78,7 @@ class LocalFsController extends FsController<LocalFsEntity, LocalFsFile, LocalFs
     }
   }
 
+  @override
   Future<void> move(LocalFsEntity entity, LocalFsDirectory dest) async {
     if (entity is LocalFsFile) {
       await entity.move(dest);

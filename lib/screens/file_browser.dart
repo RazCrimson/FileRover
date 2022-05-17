@@ -1,9 +1,6 @@
 import 'dart:io';
 
 import 'package:file_icon/file_icon.dart';
-import 'package:file_rover/fs/backends/local/controller.dart';
-import 'package:file_rover/fs/backends/local/directory.dart';
-import 'package:file_rover/fs/backends/local/entity.dart';
 import 'package:file_rover/fs/contracts/directory.dart';
 import 'package:file_rover/fs/contracts/entity.dart';
 import 'package:file_rover/fs/contracts/file.dart';
@@ -145,22 +142,22 @@ class FileBrowser extends StatelessWidget {
                 browserProvider.manualRebuild();
               }));
 
+              menuOptions.add(makePopupMenuItem("Copy", Icons.copy, () {
+                selectionProvider.select(controller, browserProvider.directory, List.from(selectedEntities));
+                selectedEntities.clear();
+                Navigator.pop(context);
+                browserProvider.manualRebuild();
+              }));
+
+              menuOptions.add(makePopupMenuItem("Cut", Icons.cut, () {
+                selectionProvider.select(controller, browserProvider.directory, List.from(selectedEntities),
+                    isCut: true);
+                selectedEntities.clear();
+                Navigator.pop(context);
+                browserProvider.manualRebuild();
+              }));
+
               if (controller.isLocal()) {
-                menuOptions.add(makePopupMenuItem("Copy", Icons.copy, () {
-                  selectionProvider.select(controller, browserProvider.directory, List.from(selectedEntities));
-                  selectedEntities.clear();
-                  Navigator.pop(context);
-                  browserProvider.manualRebuild();
-                }));
-
-                menuOptions.add(makePopupMenuItem("Cut", Icons.cut, () {
-                  selectionProvider.select(controller, browserProvider.directory, List.from(selectedEntities),
-                      isCut: true);
-                  selectedEntities.clear();
-                  Navigator.pop(context);
-                  browserProvider.manualRebuild();
-                }));
-
                 if (selectedEntities.where((e) => e.isDirectory()).isEmpty) {
                   menuOptions.add(makePopupMenuItem("Share", Icons.share, () async {
                     Navigator.pop(context);
@@ -196,12 +193,11 @@ class FileBrowser extends StatelessWidget {
           child: const Text("Paste", style: TextStyle(color: Colors.white)),
           onPressed: () async {
             final selectedEntities = selectionProvider.selectedEntities ?? [];
-            if (browserProvider.controller is LocalFsController) {
-              final controller = browserProvider.controller as LocalFsController;
-              final destination = browserProvider.directory as LocalFsDirectory;
+            if (browserProvider.controller == selectionProvider.selectedController) {
+              final controller = browserProvider.controller;
+              final destination = browserProvider.directory;
 
-              for (final item in selectedEntities) {
-                final entity = item as LocalFsEntity;
+              for (final entity in selectedEntities) {
                 selectionProvider.isCut
                     ? await controller.move(entity, destination)
                     : await controller.copy(entity, destination);
@@ -218,7 +214,8 @@ class FileBrowser extends StatelessWidget {
     final selectionProvider = Provider.of<SelectionProvider>(context);
     final browserProvider = Provider.of<BrowserProvider>(context);
 
-    if (selectionProvider.selectedEntities == null || !browserProvider.controller.isLocal()) {
+    if (selectionProvider.selectedEntities == null ||
+        browserProvider.controller != selectionProvider.selectedController) {
       return browserProvider.selectedEntities.isNotEmpty
           ? IconButton(onPressed: () => browserProvider.clearSelected(), icon: const Icon(Icons.clear))
           : null;
@@ -230,7 +227,8 @@ class FileBrowser extends StatelessWidget {
     final selectionProvider = Provider.of<SelectionProvider>(context);
     final browserProvider = Provider.of<BrowserProvider>(context);
 
-    if (selectionProvider.selectedEntities == null || !browserProvider.controller.isLocal()) {
+    if (selectionProvider.selectedEntities == null ||
+        browserProvider.controller != selectionProvider.selectedController) {
       return browserProvider.selectedEntities.isEmpty
           ? const Text("File Rover")
           : Text('${browserProvider.selectedEntities.length} selected');
@@ -250,7 +248,8 @@ class FileBrowser extends StatelessWidget {
         child: Scaffold(
             appBar: AppBar(
               leading: getLeadingWidget(context),
-              actions: selectionProvider.selectedEntities == null || !browserProvider.controller.isLocal()
+              actions: selectionProvider.selectedEntities == null ||
+                      browserProvider.controller != selectionProvider.selectedController
                   ? getStandardActions(context)
                   : getOnSelectionActions(context),
               title: getTitle(context),

@@ -83,4 +83,18 @@ class SftpFsController extends FsController<SftpFsEntity, SftpFsFile, SftpFsDire
         mode: SftpFileOpenMode.write | SftpFileOpenMode.create | SftpFileOpenMode.truncate);
     await sftpFile.writeBytes(bytes);
   }
+
+  @override
+  Future<void> copy(SftpFsEntity entity, SftpFsDirectory dest) async {
+    final session = await _sshClient.execute('cp -r "${entity.path}" "${dest.path}"');
+    session.close();
+    await session.done;
+  }
+
+  @override
+  Future<void> move(SftpFsEntity entity, SftpFsDirectory dest) async {
+    final session = await _sshClient.execute('mv "${entity.path}" "${dest.path}"');
+    session.close();
+    await session.done;
+  }
 }
