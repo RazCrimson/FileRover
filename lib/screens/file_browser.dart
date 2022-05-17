@@ -33,6 +33,17 @@ import '../widgets/sort_dialog.dart';
 class FileBrowser extends StatelessWidget {
   const FileBrowser({Key? key}) : super(key: key);
 
+  PopupMenuItem makePopupMenuItem(String title, IconData iconData, GestureTapCallback onTap) => PopupMenuItem(
+      padding: const EdgeInsets.symmetric(horizontal: 5),
+      child: ListTile(
+          minLeadingWidth: 24,
+          horizontalTitleGap: 8,
+          minVerticalPadding: 0,
+          dense: true,
+          title: Text(title),
+          onTap: onTap,
+          leading: Icon(iconData)));
+
   String getTimeValue(DateTime dateTime) {
     if (DateTime.now().difference(dateTime) < const Duration(days: 2)) return timeago.format(dateTime);
     final dateFormat = DateFormat('dd-MM-yyyy');
@@ -80,174 +91,90 @@ class FileBrowser extends StatelessWidget {
           icon: const Icon(Icons.more_vert),
           itemBuilder: (BuildContext context) {
             final List<PopupMenuEntry> menuOptions = [
-              PopupMenuItem(
-                  padding: const EdgeInsets.symmetric(horizontal: 5),
-                  child: ListTile(
-                      minLeadingWidth: 24,
-                      horizontalTitleGap: 8,
-                      minVerticalPadding: 0,
-                      dense: true,
-                      title: const Text("New Folder"),
-                      onTap: () {
-                        Navigator.pop(context);
-                        showDialog(context: context, builder: (context) => const CreateDirectoryWidget());
-                      },
-                      leading: const Icon(Icons.create_new_folder_outlined))),
-              PopupMenuItem(
-                  padding: const EdgeInsets.symmetric(horizontal: 5),
-                  child: ListTile(
-                      minLeadingWidth: 24,
-                      horizontalTitleGap: 8,
-                      minVerticalPadding: 0,
-                      dense: true,
-                      title: const Text("Select Mount"),
-                      onTap: () {
-                        Navigator.pop(context);
-                        showDialog(context: context, builder: (context) => const SelectStorageWidget());
-                      },
-                      leading: const Icon(Icons.sd_storage_sharp))),
+              makePopupMenuItem("New Folder", Icons.create_new_folder_outlined, () {
+                Navigator.pop(context);
+                showDialog(context: context, builder: (context) => const CreateDirectoryWidget());
+              }),
+              makePopupMenuItem("Select Mount", Icons.sd_storage_sharp, () {
+                Navigator.pop(context);
+                showDialog(context: context, builder: (context) => const SelectStorageWidget());
+              }),
             ];
 
             if (selectedEntities.isNotEmpty) {
               if (selectedEntities.length == 1) {
                 final entity = selectedEntities[0];
-                menuOptions.add(PopupMenuItem(
-                    padding: const EdgeInsets.symmetric(horizontal: 5),
-                    child: ListTile(
-                        minLeadingWidth: 24,
-                        horizontalTitleGap: 8,
-                        minVerticalPadding: 0,
-                        dense: true,
-                        title: const Text("Rename"),
-                        onTap: () {
-                          Navigator.pop(context);
-                          showDialog(context: context, builder: (context) => RenameEntryWidget(entity: entity));
-                          selectedEntities.clear();
-                        },
-                        leading: const Icon(CupertinoIcons.pen))));
+                menuOptions.add(makePopupMenuItem("Rename", CupertinoIcons.pen, () {
+                  Navigator.pop(context);
+                  showDialog(context: context, builder: (context) => RenameEntryWidget(entity: entity));
+                  selectedEntities.clear();
+                }));
 
-                menuOptions.add(PopupMenuItem(
-                    padding: const EdgeInsets.symmetric(horizontal: 5),
-                    child: ListTile(
-                        minLeadingWidth: 24,
-                        horizontalTitleGap: 8,
-                        minVerticalPadding: 0,
-                        dense: true,
-                        title: const Text("Details"),
-                        onTap: () {
-                          Navigator.pop(context);
-                          showDialog(context: context, builder: (context) => EntityContextMenu(entity: entity));
-                        },
-                        leading: const Icon(Icons.notes))));
-
-                if (!(controller.isLocal() || entity.isDirectory())) {
-                  menuOptions.add(PopupMenuItem(
-                      padding: const EdgeInsets.symmetric(horizontal: 5),
-                      child: ListTile(
-                          minLeadingWidth: 24,
-                          horizontalTitleGap: 8,
-                          minVerticalPadding: 0,
-                          dense: true,
-                          title: const Text("Download"),
-                          onTap: () async {
-                            Navigator.pop(context);
-                            await downloadFile(context, entity as FsFile);
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                content: Text("Downloaded ${entity.basename}"), backgroundColor: Colors.green));
-                            selectedEntities.clear();
-                            browserProvider.manualRebuild();
-                          },
-                          leading: const Icon(Icons.download))));
-                }
+                menuOptions.add(makePopupMenuItem("Details", Icons.notes, () {
+                  Navigator.pop(context);
+                  showDialog(context: context, builder: (context) => EntityContextMenu(entity: entity));
+                }));
               }
-              menuOptions.add(PopupMenuItem(
-                  padding: const EdgeInsets.symmetric(horizontal: 5),
-                  child: ListTile(
-                      minLeadingWidth: 24,
-                      horizontalTitleGap: 8,
-                      minVerticalPadding: 0,
-                      dense: true,
-                      title: Text("Delete Item${selectedEntities.length == 1 ? '' : 's'}"),
-                      onTap: () async {
-                        Navigator.pop(context);
-                        HapticFeedback.vibrate();
-                        for (final entity in selectedEntities) {
-                          try {
-                            await browserProvider.controller.delete(entity);
-                          } catch (e) {
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(SnackBar(content: Text(e.toString()), backgroundColor: Colors.red));
-                          }
-                        }
-                        selectedEntities.clear();
-                        browserProvider.manualRebuild();
-                      },
-                      leading: const Icon(Icons.delete))));
+
+              if (!(controller.isLocal() && selectedEntities.where((e) => e.isDirectory()).isEmpty)) {
+                menuOptions.add(makePopupMenuItem("Download", Icons.download, () async {
+                  Navigator.pop(context);
+                  for (final entity in selectedEntities) {
+                    await downloadFile(context, entity as FsFile);
+                  }
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(const SnackBar(content: Text("Download complete!"), backgroundColor: Colors.green));
+                  selectedEntities.clear();
+                  browserProvider.manualRebuild();
+                }));
+              }
+
+              menuOptions.add(
+                  makePopupMenuItem("Delete Item${selectedEntities.length == 1 ? '' : 's'}", Icons.delete, () async {
+                Navigator.pop(context);
+                HapticFeedback.vibrate();
+                for (final entity in selectedEntities) {
+                  try {
+                    await browserProvider.controller.delete(entity);
+                  } catch (e) {
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(SnackBar(content: Text(e.toString()), backgroundColor: Colors.red));
+                  }
+                }
+                selectedEntities.clear();
+                browserProvider.manualRebuild();
+              }));
 
               if (controller.isLocal()) {
-                menuOptions.add(PopupMenuItem(
-                    padding: const EdgeInsets.symmetric(horizontal: 5),
-                    child: ListTile(
-                        minLeadingWidth: 24,
-                        horizontalTitleGap: 8,
-                        minVerticalPadding: 0,
-                        dense: true,
-                        title: const Text("Copy"),
-                        onTap: () {
-                          selectionProvider.select(controller, browserProvider.directory, List.from(selectedEntities));
-                          selectedEntities.clear();
-                          Navigator.pop(context);
-                          browserProvider.manualRebuild();
-                        },
-                        leading: const Icon(Icons.copy))));
+                menuOptions.add(makePopupMenuItem("Copy", Icons.copy, () {
+                  selectionProvider.select(controller, browserProvider.directory, List.from(selectedEntities));
+                  selectedEntities.clear();
+                  Navigator.pop(context);
+                  browserProvider.manualRebuild();
+                }));
 
-                menuOptions.add(PopupMenuItem(
-                    padding: const EdgeInsets.symmetric(horizontal: 5),
-                    child: ListTile(
-                        minLeadingWidth: 24,
-                        horizontalTitleGap: 8,
-                        minVerticalPadding: 0,
-                        dense: true,
-                        title: const Text("Cut"),
-                        onTap: () {
-                          selectionProvider.select(controller, browserProvider.directory, List.from(selectedEntities),
-                              isCut: true);
-                          selectedEntities.clear();
-                          Navigator.pop(context);
-                          browserProvider.manualRebuild();
-                        },
-                        leading: const Icon(Icons.cut))));
+                menuOptions.add(makePopupMenuItem("Cut", Icons.cut, () {
+                  selectionProvider.select(controller, browserProvider.directory, List.from(selectedEntities),
+                      isCut: true);
+                  selectedEntities.clear();
+                  Navigator.pop(context);
+                  browserProvider.manualRebuild();
+                }));
 
                 if (selectedEntities.where((e) => e.isDirectory()).isEmpty) {
-                  menuOptions.add(PopupMenuItem(
-                      padding: const EdgeInsets.symmetric(horizontal: 5),
-                      child: ListTile(
-                          minLeadingWidth: 24,
-                          horizontalTitleGap: 8,
-                          minVerticalPadding: 0,
-                          dense: true,
-                          title: const Text("Share"),
-                          onTap: () async {
-                            Navigator.pop(context);
-                            final paths = selectedEntities.map((e) => e.path).toList();
-                            Share.shareFiles(paths);
-                            selectedEntities.clear();
-                            browserProvider.manualRebuild();
-                          },
-                          leading: const Icon(Icons.share))));
+                  menuOptions.add(makePopupMenuItem("Share", Icons.share, () async {
+                    Navigator.pop(context);
+                    final paths = selectedEntities.map((e) => e.path).toList();
+                    Share.shareFiles(paths);
+                    selectedEntities.clear();
+                    browserProvider.manualRebuild();
+                  }));
                 }
               }
             }
-            menuOptions.add(PopupMenuItem(
-                padding: const EdgeInsets.symmetric(horizontal: 5),
-                child: ListTile(
-                    minLeadingWidth: 24,
-                    horizontalTitleGap: 8,
-                    minVerticalPadding: 0,
-                    dense: true,
-                    title: const Text("Settings"),
-                    onTap: () => Navigator.pushReplacementNamed(context, "/settings"),
-                    leading: const Icon(Icons.settings))));
+            menuOptions.add(makePopupMenuItem(
+                "Settings", Icons.settings, () => Navigator.pushReplacementNamed(context, "/settings")));
+
             return menuOptions;
           })
     ];
